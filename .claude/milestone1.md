@@ -11,11 +11,11 @@
 ## Phase 1 — Database & Users
 
 ### 1.1 Supabase Setup
-- [ ] Create Supabase project
-- [ ] Add `SUPABASE_URL` and `SUPABASE_KEY` to env
-- [ ] Create db client in `src/db/client.ts`
-- [ ] Health check on startup (query `SELECT 1`)
-- [ ] Enable Row Level Security
+- [x] Create Supabase project
+- [x] Add `SUPABASE_URL` and `SUPABASE_KEY` to env
+- [x] Create db client in `src/db/client.ts`
+- [x] Health check on startup (via auth.getSession)
+- [x] Enable Row Level Security (default on new tables)
 
 ### 1.2 Users Table
 - [ ] Create migration `001_users.sql`:

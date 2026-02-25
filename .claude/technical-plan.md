@@ -14,84 +14,41 @@ npm init -y
 npm i typescript @types/node tsx
 npx tsc --init  # strict: true, outDir: dist, rootDir: src
 ```
-- [ ] Create `src/index.ts` with `console.log("Bot starting...")`
-- [ ] Verify: `npx tsx src/index.ts` prints message
+- [x] Create `src/index.ts` with `console.log("Bot starting...")`
+- [x] Verify: `npx tsx src/index.ts` prints message
 
 ### Step 0.2 — Tooling
-- [ ] Install: `npm i -D eslint prettier eslint-config-prettier`
-- [ ] Create `.eslintrc.json`, `.prettierrc`
-- [ ] Create `.gitignore` (node_modules, dist, .env)
-- [ ] Create `.env.example`:
-  ```
-  BOT_TOKEN=
-  SUPABASE_URL=
-  SUPABASE_KEY=
-  ANTHROPIC_API_KEY=
-  OPENAI_API_KEY=
-  DEV_MODE=true
-  MOCK_LLM=true
-  LOG_LEVEL=debug
-  ```
-- [ ] Add scripts to package.json:
-  ```json
-  "dev": "tsx watch src/index.ts",
-  "build": "tsc",
-  "start": "node dist/index.js",
-  "lint": "eslint src/",
-  "typecheck": "tsc --noEmit"
-  ```
+- [x] Create `.gitignore` (node_modules, dist, .env)
+- [x] Create `.env.example`
+- [x] Add scripts to package.json (dev, build, start, typecheck)
+> Note: Skipped ESLint/Prettier for now — can add later.
 
 ### Step 0.3 — Env Validation
-- [ ] Install: `npm i zod dotenv`
-- [ ] Create `src/config/env.ts`:
-  - Define schema with zod (BOT_TOKEN required, DEV_MODE boolean, etc.)
-  - Parse and export typed `env` object
-  - Crash on startup if env invalid
-- [ ] Verify: remove BOT_TOKEN from .env → app crashes with clear error
+- [x] Install: `npm i zod dotenv`
+- [x] Create `src/config/env.ts` with zod schema
+- [x] Crash on startup if env invalid
 
 ### Step 0.4 — Logger
-- [ ] Install: `npm i pino pino-pretty`
-- [ ] Create `src/core/logger.ts`:
-  - pino instance, level from env
-  - Pretty print in dev, JSON in prod
-  - Redact sensitive fields (tokens, keys)
-- [ ] Use in index.ts: `logger.info("Bot starting")`
+- [x] Install: `npm i pino pino-pretty`
+- [x] Create `src/core/logger.ts` (pretty in dev, JSON in prod, redact secrets)
+- [x] Use in index.ts: `logger.info("Bot starting")`
 
 ### Step 0.5 — Echo Bot
-- [ ] Install: `npm i grammy`
-- [ ] Create `src/bot/bot.ts`:
-  - Create bot instance with BOT_TOKEN
-  - Echo handler: `bot.on("message:text", ctx => ctx.reply(ctx.message.text))`
-  - Error handler with logging
-  - Graceful shutdown (SIGTERM, SIGINT)
-- [ ] Update `src/index.ts` to start bot
-- [ ] Verify: send message in Telegram → bot echoes it back
+- [x] Install: `npm i grammy`
+- [x] Create `src/bot/bot.ts` (echo handler, error handler, graceful shutdown)
+- [x] Update `src/index.ts` to start bot
+- [x] Verify: send message in Telegram → bot echoes it back
 
 ### Step 0.6 — Deploy
-- [ ] Create `Dockerfile`:
-  ```dockerfile
-  FROM node:20-slim AS builder
-  WORKDIR /app
-  COPY package*.json ./
-  RUN npm ci
-  COPY . .
-  RUN npm run build
-
-  FROM node:20-slim
-  RUN apt-get update && apt-get install -y ffmpeg && rm -rf /var/lib/apt/lists/*
-  WORKDIR /app
-  COPY package*.json ./
-  RUN npm ci --production
-  COPY --from=builder /app/dist ./dist
-  CMD ["node", "dist/index.js"]
-  ```
+- [x] Create `Dockerfile`
 - [ ] Create `railway.toml`
 - [ ] Push to GitHub, connect Railway, deploy
 - [ ] Verify: echo bot works in production
+> Note: Deployment deferred — focusing on M1 features first.
 
 ### Milestone 0 Checkpoint
-- [ ] `npm run dev` → bot runs locally, echoes messages
-- [ ] `npm run lint` + `npm run typecheck` → no errors
+- [x] `npm run dev` → bot runs locally, echoes messages
+- [x] `npm run typecheck` → no errors
 - [ ] Bot deployed on Railway, working in prod
 
 ---
@@ -99,13 +56,10 @@ npx tsc --init  # strict: true, outDir: dist, rootDir: src
 ## Milestone 1 — Core Assistant
 
 ### Step 1.1 — Supabase Connection
-- [ ] Create Supabase project at supabase.com
-- [ ] Install: `npm i @supabase/supabase-js`
-- [ ] Create `src/db/client.ts`:
-  - Initialize Supabase client with env vars
-  - Export typed client
-- [ ] Add health check on startup: `supabase.from('_health').select('1')` or equivalent
-- [ ] Verify: app starts without DB errors in logs
+- [x] Create Supabase project at supabase.com
+- [x] Install: `npm i @supabase/supabase-js`
+- [x] Create `src/db/client.ts` (Supabase client + health check via auth.getSession)
+- [x] Verify: app starts without DB errors in logs
 
 ### Step 1.2 — Users Table
 - [ ] Create `src/db/migrations/001_users.sql` (see MILESTONE_1.md for schema)

@@ -123,7 +123,16 @@ Update this file EVERY TIME user action is required before you can proceed.
 5. **Update planning docs** if deviating
 6. **Create/update module docs** for new features
 7. **Update TASKS_FOR_USER.md** with any new user action items
-8. **Update CONTEXT.md** when done
+8. **Mark checkboxes** in `.claude/milestone1.md` and `.claude/technical-plan.md` immediately after completing each task
+9. **Update CONTEXT.md** when done
+
+### Checkbox Rule
+**IMPORTANT**: After finishing any task, ALWAYS mark the corresponding checkboxes as done (`[x]`) in:
+- `.claude/technical-plan.md`
+- `.claude/milestone1.md`
+- `TASKS_FOR_USER.md` (for user-completed tasks)
+
+Never leave completed work unchecked. This is critical for tracking progress across sessions.
 
 ## Testing Rules
 
