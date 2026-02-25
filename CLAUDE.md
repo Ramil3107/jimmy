@@ -125,6 +125,37 @@ Update this file EVERY TIME user action is required before you can proceed.
 7. **Update TASKS_FOR_USER.md** with any new user action items
 8. **Update CONTEXT.md** when done
 
+## Testing Rules
+
+### Mandatory Testing
+- **Every module with logic** (repos, middleware, handlers, services, skills) MUST have tests
+- Write tests **as part of the implementation step**, not as a separate phase at the end
+- Run tests yourself after writing them — never leave untested code behind
+
+### Test Structure
+- **Framework**: Vitest
+- **Location**: Co-locate tests next to source files as `<name>.test.ts` (e.g., `user.repo.ts` → `user.repo.test.ts`)
+- **Naming**: Use descriptive `describe`/`it` blocks that read like specs
+- **Organization**: One `describe` per function/method, group related cases with nested `describe`
+
+### Test Quality
+- **Mock external dependencies** (Supabase, APIs, grammY context) — never hit real services in tests
+- **Test behavior, not implementation** — focus on inputs/outputs and side effects
+- **Cover edge cases**: invalid input, empty results, error paths, boundary conditions
+- **Keep tests independent** — no shared mutable state between tests, each test sets up its own fixtures
+- **Use factories/helpers** for repetitive test data setup — put shared helpers in `src/test/helpers.ts`
+
+### What to Test
+- Repository functions: CRUD operations, error handling, edge cases
+- Middleware: context mutation, next() calls, guard conditions
+- Skills/handlers: correct routing, response format, error recovery
+- Pure logic: validation, transformations, calculations
+
+### What NOT to Test
+- Simple type definitions or interfaces
+- Direct re-exports
+- Framework boilerplate (bot.start, pino config)
+
 ## Key Patterns to Follow
 
 - **Mock LLM mode**: `MOCK_LLM=true` for development without API calls
@@ -134,16 +165,8 @@ Update this file EVERY TIME user action is required before you can proceed.
 - **Flat structure**: Most folders have 1-4 files max
 - **Security**: Env-only secrets, RLS on all tables, encrypted OAuth tokens
 
-## Current Milestone: M0 — Skeleton & Deploy
+## Current Milestone: M1 — Core Assistant
 
-Goal: Bot runs, echoes messages, deploys to Railway
+Goal: Bot is deployed, understands voice and text, onboards users, routes intents via LLM, maintains chat history, confirms mutations.
 
-Steps:
-1. Project init (TypeScript, tooling)
-2. Env validation (zod)
-3. Logger (pino)
-4. Echo bot (grammY)
-5. Dockerfile (with ffmpeg for future voice support)
-6. Deploy to Railway
-
-See `claude/technical-plan.md` for detailed steps.
+See `claude/milestone1.md` for detailed tasks and `claude/technical-plan.md` for step-by-step guide.
