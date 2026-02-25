@@ -16,10 +16,10 @@
 ## What We Have
 
 - ✅ Complete project planning documentation:
-  - `claude/architecture.md` — System architecture and design decisions
-  - `claude/roadmap.md` — Full roadmap with all milestones (M0-M7+)
-  - `claude/milestone1.md` — Detailed M1 breakdown (Core Assistant)
-  - `claude/technical-plan.md` — Step-by-step implementation guide
+  - `.claude/architecture.md` — System architecture and design decisions
+  - `.claude/roadmap.md` — Full roadmap with all milestones (M0-M7+)
+  - `.claude/milestone1.md` — Detailed M1 breakdown (Core Assistant)
+  - `.claude/technical-plan.md` — Step-by-step implementation guide
 - ✅ `CLAUDE.md` — Claude Code guide with architecture and workflow rules
 - ✅ `CONTEXT.md` — This file for tracking progress
 - ✅ `TASKS_FOR_USER.md` — Action items for user (accounts, API keys, setup)
@@ -112,7 +112,7 @@ None currently.
 ## Recent Changes
 
 - 2026-02-25: Initial project setup complete
-  - Imported planning docs to `claude/` folder
+  - Imported planning docs to `.claude/` folder
   - Created CLAUDE.md with architecture rules and user task tracking rule
   - Created CONTEXT.md for progress tracking
   - Created TASKS_FOR_USER.md with M0 prerequisites

@@ -4,7 +4,7 @@
 
 **Jimmy** is a modular AI personal assistant bot for Telegram (later multi-platform). It uses natural language understanding to help users manage tasks, notes, calendar, and more through voice or text messages.
 
-**Current Status**: Planning phase. No code yet. Starting with Milestone 0 (skeleton & deploy).
+**Current Status**: M1 — Core Assistant in progress.
 
 ## Tech Stack
 
@@ -54,7 +54,7 @@ LLM Router → Skill Dispatch → Save History → Response
 
 ## Planning Documents
 
-Reference files in `claude/` folder:
+Reference files in `.claude/` folder:
 - **architecture.md** — System architecture, patterns, principles
 - **roadmap.md** — All milestones and features overview
 - **milestone1.md** — Detailed M1 tasks (current focus)
@@ -64,7 +64,7 @@ Reference files in `claude/` folder:
 
 ### 1. Update Planning Files When Deviating
 When implementation deviates from the plan (different approach, new requirements, skipped steps):
-- Update the relevant file in `claude/` folder
+- Update the relevant file in `.claude/` folder
 - Document WHY the change was made
 - Keep technical-plan.md aligned with actual implementation
 - Mark completed checkboxes in milestone files
