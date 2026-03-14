@@ -207,8 +207,65 @@ npx tsc --init  # strict: true, outDir: dist, rootDir: src
 
 ## Milestone 2 — Tasks & Reminders
 
-> Will be detailed after Milestone 1 is complete.
-> High-level steps: tasks table → task skill (CRUD) → recurring tasks → cron reminders → snooze → digests.
+### Step 2.1 — Tasks Table Migration
+- [ ] Create `src/db/migrations/003_tasks.sql` (tasks table with indexes, RLS, trigger)
+- [ ] Run migration in Supabase SQL editor (USER ACTION)
+
+### Step 2.2 — Task Types & Repository
+- [ ] Create `src/features/tasks/task.types.ts` — Task, CreateTaskData, UpdateTaskData
+- [ ] Create `src/features/tasks/task.repo.ts` — CRUD: create, getById, getByUser, update, delete, complete, getDueReminders
+- [ ] Create `src/features/tasks/task.repo.test.ts`
+
+### Step 2.3 — Task Skill + LLM Prompt Update
+- [ ] Add `mutatesData` flag to Skill interface
+- [ ] Update message handler to skip response_text for mutation skills
+- [ ] Update callback handler to pass `{ ...params, confirmed: true }`
+- [ ] Create `src/features/tasks/task.skill.ts` — register intents: create_task, list_tasks, complete_task, edit_task, delete_task
+- [ ] Update LLM prompt with task param extraction guidance (title, due_date, remind_at as ISO strings)
+- [ ] Update mock router with task patterns + params
+- [ ] Register task skill in bot.ts
+
+### Step 2.4 — Create Task Flow (End-to-End)
+- [ ] Implement create_task handler: LLM extracts params → show confirmation → user confirms → save to DB
+- [ ] Format confirmation message with title, due date in user timezone
+- [ ] Test full flow
+- [ ] Verify: "remind me to call mom tomorrow at 3pm" → confirm → task in DB
+
+### Step 2.5 — List Tasks
+- [ ] Implement list_tasks handler: show numbered list of open tasks with due dates
+- [ ] No confirmation needed (read operation)
+- [ ] Handle empty state: "You have no tasks yet"
+
+### Step 2.6 — Complete Task
+- [ ] Implement complete_task handler: match user description to task by title substring
+- [ ] Handle: exact match → confirm, multiple matches → ask to pick, no match → say not found
+- [ ] Confirmation required
+
+### Step 2.7 — Edit & Delete Task
+- [ ] Implement edit_task handler: same matching, update fields
+- [ ] Implement delete_task handler: same matching, confirmation with warning
+- [ ] Tests for both
+
+### Step 2.8 — Reminder Cron Job
+- [ ] Install: `npm i node-cron @types/node-cron`
+- [ ] Create `src/core/cron/reminder-cron.ts`: every minute, query due reminders, send messages
+- [ ] Snooze keyboard: [+15min] [+1hr] [Done]
+- [ ] Wire into `src/index.ts`
+- [ ] Tests
+
+### Step 2.9 — Snooze & Task Done Callbacks
+- [ ] Add `snoozeKeyboard()` to keyboards.ts
+- [ ] Create `src/features/tasks/task.callbacks.ts` — handleSnooze, handleTaskDone
+- [ ] Wire callbacks in bot.ts
+- [ ] Tests
+
+### Step 2.10 — Polish & Help Update
+- [ ] Update help skill with task capabilities
+- [ ] Update mock router for all task patterns
+- [ ] Update CONTEXT.md and planning docs
+
+### Step 2.11 — Daily Digests (defer to v2)
+- [ ] Morning/evening digest cron (can be added later)
 
 ## Milestone 3 — Notes
 
