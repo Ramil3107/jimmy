@@ -25,9 +25,10 @@ export interface TimezoneResult {
  * Returns null timezone if the input is gibberish or unresolvable.
  */
 export async function resolveTimezone(input: string): Promise<TimezoneResult> {
-  // If they typed a valid IANA timezone directly, just accept it
-  if (isValidTimezone(input.trim())) {
-    return { timezone: input.trim(), display: input.trim() };
+  // If they typed a full IANA timezone (Area/City format), accept it directly
+  const trimmed = input.trim();
+  if (trimmed.includes('/') && isValidTimezone(trimmed)) {
+    return { timezone: trimmed, display: trimmed };
   }
 
   const client = getClient();
