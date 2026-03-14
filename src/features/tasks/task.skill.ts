@@ -8,20 +8,19 @@ import { logger } from '../../core/logger.js';
 export const taskSkill: Skill = {
   name: 'tasks',
   intents: ['create_task', 'list_tasks', 'complete_task', 'edit_task', 'delete_task'],
-  description: 'Manage tasks and reminders. Create, list, complete, edit, and delete tasks. Supports due dates and reminders.',
+  description: 'Task management. Intents: create_task (when user says "remind me to...", "create task", "add task", "I need to..."), list_tasks (when user says "show tasks", "my tasks", "what do I need to do"), complete_task ("mark X as done", "I did X"), edit_task ("change X to Y"), delete_task ("delete X", "remove X").',
   examples: [
-    'remind me to call mom tomorrow at 3pm',
-    'create a task to buy groceries',
-    'show my tasks',
-    'what do I need to do?',
-    'mark call mom as done',
-    'delete the grocery task',
-    'change the meeting task to friday',
+    'remind me to call mom tomorrow at 3pm → create_task',
+    'show my tasks → list_tasks',
+    'mark call mom as done → complete_task',
+    'delete the grocery task → delete_task',
   ],
   mutatesData: true,
   handler: async (ctx: BotContext, params: Record<string, unknown>): Promise<void> => {
     const intent = params.intent as string || 'create_task';
     const confirmed = params.confirmed as boolean || false;
+
+    logger.debug({ intent, confirmed, params }, 'Task skill handler called');
 
     switch (intent) {
       case 'create_task':
