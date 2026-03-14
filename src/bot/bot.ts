@@ -18,10 +18,12 @@ import { handleConfirmCallback, handleCancelCallback } from './handlers/callback
 import { registerSkill } from '../core/skills/registry.js';
 import { chatSkill } from '../features/chat/chat.skill.js';
 import { helpSkill } from '../features/help/help.skill.js';
+import { taskSkill } from '../features/tasks/task.skill.js';
 
 // Register skills
 registerSkill(chatSkill);
 registerSkill(helpSkill);
+registerSkill(taskSkill);
 
 export const bot = new Bot<BotContext>(env.BOT_TOKEN);
 

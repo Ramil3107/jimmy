@@ -20,7 +20,7 @@ export async function handleConfirmCallback(ctx: BotContext, actionId: string): 
   }
 
   try {
-    await skill.handler(ctx, action.params);
+    await skill.handler(ctx, { ...action.params, confirmed: true });
     await ctx.answerCallbackQuery('✅ Done!');
   } catch (err) {
     logger.error(err, 'Confirmation handler failed');

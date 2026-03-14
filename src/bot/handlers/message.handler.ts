@@ -61,15 +61,17 @@ export async function handleMessage(ctx: BotContext, text: string): Promise<void
     const skill = getSkillByIntent(result.intent);
 
     if (skill) {
-      if (skill.name === 'help') {
-        await skill.handler(ctx, result.params);
+      await skill.handler(ctx, { ...result.params, intent: result.intent });
+
+      // Mutation skills handle their own replies (confirmation flow)
+      // Help and other self-replying skills also return here
+      if (skill.mutatesData || skill.name === 'help') {
+        saveMessage(user.id, 'user', text, result.intent).catch(() => {});
         return;
       }
-
-      await skill.handler(ctx, result.params);
     }
 
-    // Send LLM response text
+    // Send LLM response text (for chat and non-mutation skills)
     if (result.response_text) {
       await ctx.reply(result.response_text);
       saveMessage(user.id, 'assistant', result.response_text, result.intent).catch((err) => {

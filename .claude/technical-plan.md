@@ -208,27 +208,27 @@ npx tsc --init  # strict: true, outDir: dist, rootDir: src
 ## Milestone 2 — Tasks & Reminders
 
 ### Step 2.1 — Tasks Table Migration
-- [ ] Create `src/db/migrations/003_tasks.sql` (tasks table with indexes, RLS, trigger)
-- [ ] Run migration in Supabase SQL editor (USER ACTION)
+- [x] Create `src/db/migrations/003_tasks.sql` (tasks table with indexes, RLS, trigger)
+- [x] Run migration in Supabase SQL editor
 
 ### Step 2.2 — Task Types & Repository
-- [ ] Create `src/features/tasks/task.types.ts` — Task, CreateTaskData, UpdateTaskData
-- [ ] Create `src/features/tasks/task.repo.ts` — CRUD: create, getById, getByUser, update, delete, complete, getDueReminders
-- [ ] Create `src/features/tasks/task.repo.test.ts`
+- [x] Create `src/features/tasks/task.types.ts` — Task, CreateTaskData, UpdateTaskData, TaskWithUser
+- [x] Create `src/features/tasks/task.repo.ts` — CRUD: create, getById, getByUser, update, delete, complete, getDueReminders, clearReminder
+- [x] Create `src/features/tasks/task.repo.test.ts`
 
 ### Step 2.3 — Task Skill + LLM Prompt Update
-- [ ] Add `mutatesData` flag to Skill interface
-- [ ] Update message handler to skip response_text for mutation skills
-- [ ] Update callback handler to pass `{ ...params, confirmed: true }`
-- [ ] Create `src/features/tasks/task.skill.ts` — register intents: create_task, list_tasks, complete_task, edit_task, delete_task
-- [ ] Update LLM prompt with task param extraction guidance (title, due_date, remind_at as ISO strings)
-- [ ] Update mock router with task patterns + params
-- [ ] Register task skill in bot.ts
+- [x] Add `mutatesData` flag to Skill interface
+- [x] Update message handler to skip response_text for mutation skills, pass intent in params
+- [x] Update callback handler to pass `{ ...params, confirmed: true }`
+- [x] Create `src/features/tasks/task.skill.ts` — all intents: create_task, list_tasks, complete_task, edit_task, delete_task
+- [x] Update LLM prompt with task param extraction guidance (title, due_date, remind_at as ISO strings)
+- [x] Update mock router with task patterns + params
+- [x] Register task skill in bot.ts
 
 ### Step 2.4 — Create Task Flow (End-to-End)
-- [ ] Implement create_task handler: LLM extracts params → show confirmation → user confirms → save to DB
-- [ ] Format confirmation message with title, due date in user timezone
-- [ ] Test full flow
+- [x] Implement create_task handler: LLM extracts params → show confirmation → user confirms → save to DB
+- [x] Format confirmation with title, due date in user timezone
+- [x] List, complete, edit, delete all implemented with confirmation flow
 - [ ] Verify: "remind me to call mom tomorrow at 3pm" → confirm → task in DB
 
 ### Step 2.5 — List Tasks
