@@ -216,8 +216,8 @@
 ### Unit Tests
 - [x] Setup Vitest
 - [x] Tests for user repository (with mock Supabase)
-- [ ] Tests for pending actions (TTL, confirm, cancel)
-- [ ] Tests for skill registry (register, find, list)
+- [x] Tests for pending actions (TTL, confirm, cancel)
+- [x] Tests for skill registry (register, find, list)
 
 ### LLM Quality Tests
 - [ ] Create `scripts/test-llm.ts` — set of messages with expected intents

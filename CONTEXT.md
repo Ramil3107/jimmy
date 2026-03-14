@@ -7,8 +7,8 @@
 
 ## Current Status
 
-**Phase**: M0 nearly complete, M1 ready to start
-**Milestone**: M1 - Core Assistant (Step 1.2 — Users Table is next)
+**Phase**: M1 complete (all 14 steps done)
+**Milestone**: M1 - Core Assistant ✅
 **Last Updated**: 2026-03-14
 
 ---
@@ -64,36 +64,27 @@
 | Step | Description | Status |
 |------|-------------|--------|
 | 1.1 | Supabase Connection | ✅ Done |
-| 1.2 | Users Table + Repo | ❌ Next |
-| 1.3 | Auth Middleware | ❌ |
-| 1.4 | Onboarding Guard | ❌ |
-| 1.5 | Onboarding Flow | ❌ |
-| 1.6 | Voice Processing | ❌ |
-| 1.7 | LLM Router | ❌ |
-| 1.8 | Mock LLM Router | ❌ |
-| 1.9 | Skill Registry | ❌ |
-| 1.10 | Main Message Handler | ❌ |
-| 1.11 | Confirmation System | ❌ |
-| 1.12 | Messages Table & History | ❌ |
-| 1.13 | Rate Limiter | ❌ |
-| 1.14 | Tests | ❌ |
+| 1.2 | Users Table + Repo | ✅ Done |
+| 1.3 | Auth Middleware | ✅ Done |
+| 1.4 | Onboarding Guard | ✅ Done |
+| 1.5 | Onboarding Flow | ✅ Done |
+| 1.6 | Voice Processing | ✅ Done |
+| 1.7 | LLM Router (OpenAI) | ✅ Done |
+| 1.8 | Mock LLM Router | ✅ Done |
+| 1.9 | Skill Registry | ✅ Done |
+| 1.10 | Main Message Handler | ✅ Done |
+| 1.11 | Confirmation System | ✅ Done |
+| 1.12 | Messages Table & History | ✅ Done |
+| 1.13 | Rate Limiter | ✅ Done |
+| 1.14 | Tests (80 passing) | ✅ Done |
 
 ---
 
 ## Next Steps
 
-1. **Immediate**: Step 1.2 — Users Table
-   - Create `src/db/migrations/001_users.sql`
-   - User runs migration in Supabase SQL editor
-   - Create `src/features/users/user.types.ts` and `user.repo.ts`
-   - Write tests for user repo
-
-2. **Then**: Step 1.3 — Auth Middleware
-   - Create extended BotContext type
-   - Auth middleware (find/create user, attach to ctx)
-   - Remove echo handler
-
-3. **Then**: Step 1.4-1.5 — Onboarding Guard + Flow
+1. **Test with real LLM**: Set `MOCK_LLM=false` and test with OpenAI GPT-4o-mini
+2. **Deploy**: Create railway.toml, deploy to Railway (remaining M0 task)
+3. **Move to M2**: Tasks & Reminders milestone
 
 ---
 
@@ -125,7 +116,7 @@
 | Milestone | Status | Completion |
 |-----------|--------|------------|
 | M0 - Skeleton & Deploy | 🟡 80% (deploy deferred) | 80% |
-| M1 - Core Assistant | 🟡 In Progress | ~7% (1/14 steps) |
+| M1 - Core Assistant | ✅ Complete | 100% |
 | M2 - Tasks & Reminders | ⚪ Planned | 0% |
 | M3 - Notes | ⚪ Planned | 0% |
 | M4 - Google Calendar | ⚪ Planned | 0% |

@@ -188,10 +188,10 @@ npx tsc --init  # strict: true, outDir: dist, rootDir: src
 - [x] Install: `npm i -D vitest`
 - [x] Create `vitest.config.ts`
 - [x] Test: user repository (mock Supabase client)
-- [ ] Test: pending actions (set, get, TTL, confirm, cancel)
-- [ ] Test: skill registry (register, find, list)
-- [ ] Create `scripts/test-llm.ts` — intent routing quality tests
-- [ ] Add script: `"test": "vitest run"`
+- [x] Test: pending actions (set, get, TTL, confirm, cancel)
+- [x] Test: skill registry (register, find, list)
+- [ ] Create `scripts/test-llm.ts` — intent routing quality tests (deferred to when LLM is actively used)
+- [x] Add script: `"test": "vitest run"`
 
 ### Milestone 1 Checkpoint
 - [ ] Full onboarding works (language, name, timezone, digests)
