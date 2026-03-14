@@ -141,7 +141,7 @@
   - `< 0.3` → "Didn't understand, try rephrasing"
 
 ### 4.3 Skill Registry
-- [ ] Create `src/core/skills/registry.ts`
+- [x] Create `src/core/skills/registry.ts`
 - [ ] Skill interface:
   ```typescript
   interface Skill {

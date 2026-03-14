@@ -131,17 +131,17 @@ npx tsc --init  # strict: true, outDir: dist, rootDir: src
 - [x] Verify: `MOCK_LLM=true` → bot responds without API calls
 
 ### Step 1.9 — Skill Registry
-- [ ] Create `src/core/skills/types.ts` — Skill interface
-- [ ] Create `src/core/skills/registry.ts`:
-  - `register(skill)`, `getByIntent(intent)`, `getDescriptions()`
-- [ ] Create `src/features/chat/chat.skill.ts`:
+- [x] Create `src/core/skills/types.ts` — Skill interface
+- [x] Create `src/core/skills/registry.ts`:
+  - `registerSkill(skill)`, `getSkillByIntent(intent)`, `getSkillDescriptions()`, `getAllSkills()`
+- [x] Create `src/features/chat/chat.skill.ts`:
   - Intent: "chat"
-  - Handler: pass to Claude for free-form response
-- [ ] Create `src/features/help/help.skill.ts`:
+  - Handler: no-op (LLM response_text used directly)
+- [x] Create `src/features/help/help.skill.ts`:
   - Intent: "help"
   - Handler: list skills from registry
-- [ ] Register skills on startup
-- [ ] Verify: send "help" → get skill list, send "hello" → get chat response
+- [ ] Register skills on startup (Step 1.10)
+- [ ] Verify: send "help" → get skill list, send "hello" → get chat response (Step 1.10)
 
 ### Step 1.10 — Main Message Handler
 - [ ] Create `src/bot/handlers/message.handler.ts`:
