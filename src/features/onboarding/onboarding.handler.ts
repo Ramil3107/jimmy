@@ -99,9 +99,9 @@ async function stepTimezonePrompt(ctx: BotContext): Promise<void> {
 
   if (suggestion) {
     await ctx.reply(
-      `🕐 Based on your language, your timezone might be **${suggestion.city}** (${suggestion.tz}).\n\nIs that correct?`,
+      `🕐 Based on your language, your timezone might be <b>${suggestion.city}</b> (${suggestion.tz}).\n\nIs that correct?`,
       {
-        parse_mode: 'Markdown',
+        parse_mode: 'HTML',
         reply_markup: timezoneSuggestionKeyboard(suggestion.tz, suggestion.city),
       },
     );
