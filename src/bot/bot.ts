@@ -3,6 +3,7 @@ import { env } from '../config/env.js';
 import { logger } from '../core/logger.js';
 import type { BotContext } from './context.js';
 import { authMiddleware } from './middleware/auth.js';
+import { rateLimitMiddleware } from './middleware/rate-limit.js';
 import { onboardingGuard } from './middleware/onboarding-guard.js';
 import {
   handleOnboarding,
@@ -29,6 +30,7 @@ bot.catch((err) => {
 });
 
 // Middleware pipeline
+bot.use(rateLimitMiddleware);
 bot.use(authMiddleware);
 
 // /start command — triggers onboarding for new users, re-greets onboarded users

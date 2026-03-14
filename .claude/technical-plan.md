@@ -173,16 +173,16 @@ npx tsc --init  # strict: true, outDir: dist, rootDir: src
   - `saveMessage(userId, role, content, intent)`
   - `getRecentMessages(userId, limit=20)` — returns chronological order
 - [x] Integrate into message handler: save user + assistant messages, load history for LLM context
-- [ ] Run migration in Supabase SQL editor (USER ACTION REQUIRED)
+- [x] Run migration in Supabase SQL editor
 - [ ] Verify: check messages table after conversation
 
 ### Step 1.13 — Rate Limiter
-- [ ] Create `src/bot/middleware/rate-limit.ts`:
-  - In-memory counter per user
+- [x] Create `src/bot/middleware/rate-limit.ts`:
+  - In-memory counter per user with 1min window
   - Max 30 messages/minute
-  - Reply with "slow down" if exceeded
-- [ ] Register in middleware pipeline
-- [ ] Verify: spam messages → get rate limit response
+  - Reply with "too many messages" if exceeded
+- [x] Register in middleware pipeline (before auth)
+- [x] Tests pass
 
 ### Step 1.14 — Tests
 - [x] Install: `npm i -D vitest`
