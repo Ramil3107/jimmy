@@ -123,11 +123,12 @@ npx tsc --init  # strict: true, outDir: dist, rootDir: src
 - [ ] Verify: test with a few messages, check JSON output in logs (will test after Step 1.10)
 
 ### Step 1.8 — Mock LLM Router
-- [ ] Create `src/core/llm/mock-router.ts`:
-  - Pattern matching: "help" → help, anything else → chat
+- [x] Create `src/core/llm/mock-router.ts`:
+  - Pattern matching: help, tasks, notes, calendar → correct intents
+  - Anything else → chat
   - Returns same IntentResult shape
-- [ ] In router.ts: if `env.MOCK_LLM` → use mock router
-- [ ] Verify: `MOCK_LLM=true` → bot responds without API calls
+- [x] Create `src/core/llm/index.ts` — unified entry point, picks real/mock based on env
+- [x] Verify: `MOCK_LLM=true` → bot responds without API calls
 
 ### Step 1.9 — Skill Registry
 - [ ] Create `src/core/skills/types.ts` — Skill interface

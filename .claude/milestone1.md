@@ -156,9 +156,9 @@
 - [ ] Initial skills: `chat`, `help`
 
 ### 4.4 Mock LLM (dev)
-- [ ] Create `src/core/llm/mock-router.ts`
-- [ ] Pattern matching by keywords (no API calls)
-- [ ] Toggle via `MOCK_LLM=true` in env
+- [x] Create `src/core/llm/mock-router.ts`
+- [x] Pattern matching by keywords (no API calls)
+- [x] Toggle via `MOCK_LLM=true` in env
 
 ---
 
