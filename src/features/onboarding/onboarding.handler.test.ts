@@ -201,7 +201,7 @@ describe('handleOnboardingText', () => {
 
     await handleOnboardingText(ctx);
 
-    expect(mockUpdateUser).toHaveBeenCalledWith('uuid-123', { language: 'Italian', onboarding_step: 2 });
+    expect(mockUpdateUser).toHaveBeenCalledWith('uuid-123', { language: 'it', onboarding_step: 2 });
   });
 
   it('step 2: treats text as name', async () => {

@@ -1,3 +1,4 @@
+import { InlineKeyboard } from 'grammy';
 import type { BotContext } from '../../bot/context.js';
 import { updateUser } from '../users/user.repo.js';
 import {
@@ -112,7 +113,6 @@ async function stepTimezonePrompt(ctx: BotContext): Promise<void> {
 }
 
 function timezoneSuggestionKeyboard(tz: string, city: string) {
-  const { InlineKeyboard } = require('grammy') as typeof import('grammy');
   return new InlineKeyboard()
     .text(`✅ Yes, ${city}`, `tz:${tz}`)
     .text('❌ No, pick another', 'tz_region:pick')
@@ -178,20 +178,76 @@ export async function handleLanguageCallback(ctx: BotContext, langCode: string):
   await stepNameInput(ctx);
 }
 
+// Known languages for free-text matching (lowercase → display name + code)
+const knownLanguages: Record<string, { name: string; code: string }> = {
+  english: { name: 'English', code: 'en' },
+  eng: { name: 'English', code: 'en' },
+  ukrainian: { name: 'Українська', code: 'uk' },
+  spanish: { name: 'Español', code: 'es' },
+  german: { name: 'Deutsch', code: 'de' },
+  french: { name: 'Français', code: 'fr' },
+  portuguese: { name: 'Português', code: 'pt' },
+  turkish: { name: 'Türkçe', code: 'tr' },
+  azerbaijani: { name: 'Azərbaycan', code: 'az' },
+  italian: { name: 'Italiano', code: 'it' },
+  polish: { name: 'Polski', code: 'pl' },
+  japanese: { name: '日本語', code: 'ja' },
+  chinese: { name: '中文', code: 'zh' },
+  arabic: { name: 'العربية', code: 'ar' },
+  hindi: { name: 'हिन्दी', code: 'hi' },
+  russian: { name: 'Русский', code: 'ru' },
+  korean: { name: '한국어', code: 'ko' },
+  dutch: { name: 'Nederlands', code: 'nl' },
+  swedish: { name: 'Svenska', code: 'sv' },
+  czech: { name: 'Čeština', code: 'cs' },
+  romanian: { name: 'Română', code: 'ro' },
+  greek: { name: 'Ελληνικά', code: 'el' },
+  hebrew: { name: 'עברית', code: 'he' },
+  thai: { name: 'ไทย', code: 'th' },
+  vietnamese: { name: 'Tiếng Việt', code: 'vi' },
+  indonesian: { name: 'Bahasa Indonesia', code: 'id' },
+  malay: { name: 'Bahasa Melayu', code: 'ms' },
+  finnish: { name: 'Suomi', code: 'fi' },
+  danish: { name: 'Dansk', code: 'da' },
+  norwegian: { name: 'Norsk', code: 'nb' },
+  hungarian: { name: 'Magyar', code: 'hu' },
+  bulgarian: { name: 'Български', code: 'bg' },
+  serbian: { name: 'Српски', code: 'sr' },
+  croatian: { name: 'Hrvatski', code: 'hr' },
+  georgian: { name: 'ქართული', code: 'ka' },
+  persian: { name: 'فارسی', code: 'fa' },
+};
+
 /** Handle free-text language input (when user chose "Other") */
 export async function handleLanguageText(ctx: BotContext, text: string): Promise<void> {
-  const language = text.trim();
-  if (language.length < 2 || language.length > 50) {
-    await ctx.reply('I didn\'t understand that. Please type a language name (e.g. "Italian", "日本語"):');
+  const input = text.trim().toLowerCase();
+
+  if (input.length < 2 || input.length > 50) {
+    await ctx.reply(
+      'I didn\'t understand that. Please type a language name in English (e.g. "Italian", "Korean", "Arabic"):',
+    );
     return;
   }
 
-  await updateUser(ctx.user.id, { language, onboarding_step: 2 });
-  ctx.user.language = language;
-  ctx.user.onboarding_step = 2;
+  // Try to match against known languages
+  const match = knownLanguages[input];
+  if (match) {
+    await updateUser(ctx.user.id, { language: match.code, onboarding_step: 2 });
+    ctx.user.language = match.code;
+    ctx.user.onboarding_step = 2;
 
-  await ctx.reply(`✅ Got it — I'll speak ${language}!`);
-  await stepNameInput(ctx);
+    await ctx.reply(`✅ Got it — I'll speak ${match.name}!`);
+    await stepNameInput(ctx);
+    return;
+  }
+
+  // Not recognized — ask to try again or pick from buttons
+  await ctx.reply(
+    `I don't recognize "${text.trim()}" as a language.\n\n` +
+    'Please type the language name in English (e.g. "Italian", "Korean"), or pick from the list:',
+    { reply_markup: languageKeyboard() },
+  );
+
 }
 
 /** Handle name input */
