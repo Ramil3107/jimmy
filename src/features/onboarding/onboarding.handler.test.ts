@@ -9,7 +9,16 @@ vi.mock('../users/user.repo.js', () => ({
 }));
 
 vi.mock('../../core/logger.js', () => ({
-  logger: { warn: vi.fn(), info: vi.fn() },
+  logger: { warn: vi.fn(), info: vi.fn(), error: vi.fn() },
+}));
+
+vi.mock('./timezone-resolver.js', () => ({
+  resolveTimezone: vi.fn(),
+  mockResolveTimezone: vi.fn().mockReturnValue({ timezone: null, display: null }),
+}));
+
+vi.mock('../../config/env.js', () => ({
+  env: { MOCK_LLM: true },
 }));
 
 import {
@@ -41,6 +50,7 @@ function makeCtx(step: number, text?: string): BotContext {
     user: { ...baseUser, onboarding_step: step },
     message: text ? { text } : undefined,
     reply: vi.fn(),
+    replyWithChatAction: vi.fn(),
     answerCallbackQuery: vi.fn(),
     editMessageText: vi.fn(),
   } as unknown as BotContext;
@@ -88,8 +98,7 @@ describe('handleOnboarding', () => {
     await handleOnboarding(ctx);
 
     expect(ctx.reply).toHaveBeenCalledWith(
-      expect.stringContaining('UTC offset'),
-      expect.objectContaining({ reply_markup: expect.anything() }),
+      expect.stringContaining('Where are you located'),
     );
   });
 });
@@ -212,15 +221,14 @@ describe('handleOnboardingText', () => {
     expect(mockUpdateUser).toHaveBeenCalledWith('uuid-123', { display_name: 'Ramil', onboarding_step: 3 });
   });
 
-  it('step 3: re-shows timezone prompt for text input', async () => {
-    const ctx = makeCtx(3, 'some random text');
+  it('step 3: asks to retry when timezone not recognized', async () => {
+    const ctx = makeCtx(3, 'asdasd');
 
     await handleOnboardingText(ctx);
 
-    // Should re-show the timezone keyboard
+    // mockResolveTimezone returns null, so should ask to try again
     expect(ctx.reply).toHaveBeenCalledWith(
-      expect.stringContaining('timezone'),
-      expect.anything(),
+      expect.stringContaining('couldn\'t figure out'),
     );
   });
 });

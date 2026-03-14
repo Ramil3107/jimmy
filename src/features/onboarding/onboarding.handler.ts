@@ -3,11 +3,11 @@ import type { BotContext } from '../../bot/context.js';
 import { updateUser } from '../users/user.repo.js';
 import {
   languageKeyboard,
-  utcOffsetKeyboard,
   digestTimeKeyboard,
-  isValidTimezone,
 } from '../../bot/keyboards.js';
 import { logger } from '../../core/logger.js';
+import { resolveTimezone, mockResolveTimezone } from './timezone-resolver.js';
+import { env } from '../../config/env.js';
 
 /**
  * Handle messages from users who haven't completed onboarding.
@@ -70,12 +70,11 @@ async function stepNameInput(ctx: BotContext): Promise<void> {
   await ctx.reply('👤 How should I call you?');
 }
 
-/** Step 3 → Ask for timezone via UTC offset */
+/** Step 3 → Ask for timezone naturally */
 async function stepTimezonePrompt(ctx: BotContext): Promise<void> {
   await ctx.reply(
-    '🕐 What\'s your UTC offset?\n\n' +
-    'Not sure? Google "what is my UTC offset" — it takes 2 seconds!',
-    { reply_markup: utcOffsetKeyboard() },
+    '🕐 Where are you located? Just type your city or country.\n\n' +
+    'Examples: "Lisbon", "New York", "Germany", "Tokyo"',
   );
 }
 
@@ -222,22 +221,18 @@ export async function handleNameInput(ctx: BotContext, text: string): Promise<vo
   await stepTimezonePrompt(ctx);
 }
 
-/** Handle timezone region/manual selection callback */
+/** Handle timezone confirmation callback */
 export async function handleTimezoneRegionCallback(ctx: BotContext, region: string): Promise<void> {
-  if (region === 'manual') {
+  if (region === 'retry') {
     await ctx.answerCallbackQuery();
-    await ctx.reply(
-      '✏️ Please type your timezone in IANA format.\n\n' +
-      'Examples: Europe/Lisbon, America/New_York, Asia/Tokyo',
+    await ctx.editMessageText(
+      '🕐 Let\'s try again. Where are you located?\n\n' +
+      'Type your city or country (e.g. "Lisbon", "Germany", "Tokyo"):',
     );
     return;
   }
 
-  // Fallback — show offset keyboard
   await ctx.answerCallbackQuery();
-  await ctx.editMessageText('🕐 What\'s your UTC offset?', {
-    reply_markup: utcOffsetKeyboard(),
-  });
 }
 
 /** Handle timezone selection callback */
@@ -250,25 +245,45 @@ export async function handleTimezoneCallback(ctx: BotContext, timezone: string):
   await stepDigestMorning(ctx);
 }
 
-/** Handle manual timezone text input */
+/** Handle timezone text input — resolve via LLM */
 export async function handleTimezoneText(ctx: BotContext, text: string): Promise<void> {
-  const tz = text.trim();
+  const input = text.trim();
 
-  if (!isValidTimezone(tz)) {
-    await ctx.reply(
-      'I don\'t recognize that timezone. Please use IANA format like Europe/Lisbon or America/New_York.\n\n' +
-      'Or pick your UTC offset from the buttons:',
-      { reply_markup: utcOffsetKeyboard() },
-    );
+  if (input.length < 2 || input.length > 100) {
+    await ctx.reply('Please type a city or country name (e.g. "Lisbon", "Germany", "Tokyo"):');
     return;
   }
 
-  await updateUser(ctx.user.id, { timezone: tz, onboarding_step: 4 });
-  ctx.user.timezone = tz;
-  ctx.user.onboarding_step = 4;
+  try {
+    await ctx.replyWithChatAction('typing');
 
-  await ctx.reply(`✅ Timezone set to ${tz}`);
-  await stepDigestMorning(ctx);
+    const result = env.MOCK_LLM
+      ? mockResolveTimezone(input)
+      : await resolveTimezone(input);
+
+    if (!result.timezone) {
+      await ctx.reply(
+        `I couldn't figure out a timezone from "${input}".\n\n` +
+        'Please try a city or country name (e.g. "Lisbon", "New York", "Japan"):',
+      );
+      return;
+    }
+
+    // Ask for confirmation
+    const kb = new InlineKeyboard()
+      .text(`✅ Yes, ${result.display}`, `tz:${result.timezone}`)
+      .text('❌ No, try again', 'tz_region:retry');
+
+    await ctx.reply(
+      `🕐 Got it — ${result.display} (${result.timezone}). Is that right?`,
+      { reply_markup: kb },
+    );
+  } catch (err) {
+    logger.error(err, 'Timezone resolution failed');
+    await ctx.reply(
+      'Something went wrong. Please try again with a city or country name:',
+    );
+  }
 }
 
 /** Handle digest time selection callback */

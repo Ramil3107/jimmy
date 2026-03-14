@@ -26,39 +26,6 @@ export function languageKeyboard(): InlineKeyboard {
     .text('🌍 Other (type it)', 'lang:other');
 }
 
-/** UTC offset keyboard — grouped in rows of 3 */
-export function utcOffsetKeyboard(): InlineKeyboard {
-  return new InlineKeyboard()
-    .text('UTC-8', 'tz:Etc/GMT+8')
-    .text('UTC-7', 'tz:Etc/GMT+7')
-    .text('UTC-6', 'tz:Etc/GMT+6')
-    .row()
-    .text('UTC-5', 'tz:Etc/GMT+5')
-    .text('UTC-4', 'tz:Etc/GMT+4')
-    .text('UTC-3', 'tz:Etc/GMT+3')
-    .row()
-    .text('UTC-1', 'tz:Etc/GMT+1')
-    .text('UTC+0', 'tz:Etc/GMT')
-    .text('UTC+1', 'tz:Etc/GMT-1')
-    .row()
-    .text('UTC+2', 'tz:Etc/GMT-2')
-    .text('UTC+3', 'tz:Etc/GMT-3')
-    .text('UTC+4', 'tz:Etc/GMT-4')
-    .row()
-    .text('UTC+5', 'tz:Etc/GMT-5')
-    .text('UTC+5:30', 'tz:Asia/Kolkata')
-    .text('UTC+6', 'tz:Etc/GMT-6')
-    .row()
-    .text('UTC+7', 'tz:Etc/GMT-7')
-    .text('UTC+8', 'tz:Etc/GMT-8')
-    .text('UTC+9', 'tz:Etc/GMT-9')
-    .row()
-    .text('UTC+10', 'tz:Etc/GMT-10')
-    .text('UTC+12', 'tz:Etc/GMT-12')
-    .row()
-    .text('✏️ Type city (e.g. "Europe/Lisbon")', 'tz_region:manual');
-}
-
 /** Validate if a string is a valid IANA timezone */
 export function isValidTimezone(tz: string): boolean {
   try {
