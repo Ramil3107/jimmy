@@ -141,7 +141,7 @@ async function showTodayTasks(ctx: BotContext): Promise<void> {
   }
 
   if (todayDone.length > 0) {
-    lines.push('\n_Completed:_\n');
+    lines.push('\n☑️ _Completed:_\n');
     for (const t of todayDone) {
       lines.push(`✓  ~${escV2(t.title)}~`);
     }
