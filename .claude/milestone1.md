@@ -165,9 +165,9 @@
 ## Phase 5 — Confirmations & History
 
 ### 5.1 Confirmation System
-- [ ] Create `src/core/session/pending-actions.ts`
-- [ ] In-memory Map: userId → PendingAction
-- [ ] PendingAction: intent, params, description, createdAt, TTL (5 min)
+- [x] Create `src/core/session/pending-actions.ts`
+- [x] In-memory Map: userId → PendingAction
+- [x] PendingAction: intent, params, description, createdAt, TTL (5 min)
 - [ ] On mutation intent:
   1. Bot shows what it's about to do (in user's language)
   2. Inline keyboard [✅ Confirm] [❌ Cancel]

@@ -152,18 +152,20 @@ npx tsc --init  # strict: true, outDir: dist, rootDir: src
   - Execute skill handler
   - Confidence thresholds (< 0.3 fallback, < 0.6 clarify)
 - [x] Wire everything together in bot.ts (skills registered, voice→handler, text→handler)
-- [ ] Verify: full flow works — message → intent → skill → response
+- [x] Verify: full flow works — message → intent → skill → response
 
 ### Step 1.11 — Confirmation System
-- [ ] Create `src/core/session/pending-actions.ts`:
-  - In-memory Map: `userId → { action, createdAt }`
-  - `set(userId, action)` → returns actionId
-  - `get(userId, actionId)` → PendingAction | null (check TTL)
-  - `confirm(userId, actionId)` → execute and remove
-  - `cancel(userId, actionId)` → remove
-- [ ] Create `src/bot/handlers/callback.handler.ts`:
+- [x] Create `src/core/session/pending-actions.ts`:
+  - In-memory Map with 5min TTL
+  - `setPendingAction(userId, intent, params, description)` → actionId
+  - `getPendingAction(actionId)` → PendingAction | null (checks TTL)
+  - `confirmPendingAction(actionId)` → executes and removes
+  - `cancelPendingAction(actionId)` → removes
+  - One pending action per user (new replaces old)
+- [x] Create `src/bot/handlers/callback.handler.ts`:
   - Handle confirm/cancel callback queries
-- [ ] Verify: (will be fully tested when tasks are added in M2)
+  - Wired into bot.ts callback router
+- [x] Verify: unit tests pass (full integration test in M2 with tasks)
 
 ### Step 1.12 — Messages Table & History
 - [ ] Create `src/db/migrations/002_messages.sql`

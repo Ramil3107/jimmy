@@ -13,6 +13,7 @@ import {
 } from '../features/onboarding/onboarding.handler.js';
 import { handleVoice } from '../features/voice/voice.handler.js';
 import { handleMessage } from './handlers/message.handler.js';
+import { handleConfirmCallback, handleCancelCallback } from './handlers/callback.handler.js';
 import { registerSkill } from '../core/skills/registry.js';
 import { chatSkill } from '../features/chat/chat.skill.js';
 import { helpSkill } from '../features/help/help.skill.js';
@@ -71,6 +72,19 @@ bot.on('callback_query:data', async (ctx) => {
     const type = parts[1] as 'morning' | 'evening';
     const time = parts.slice(2).join(':');
     await handleDigestCallback(ctx, type, time);
+    return;
+  }
+
+  // Confirmation system
+  if (data.startsWith('confirm:')) {
+    const actionId = data.slice(8);
+    await handleConfirmCallback(ctx, actionId);
+    return;
+  }
+
+  if (data.startsWith('cancel:')) {
+    const actionId = data.slice(7);
+    await handleCancelCallback(ctx, actionId);
     return;
   }
 
