@@ -125,8 +125,23 @@ async function showTodayTasks(ctx: BotContext): Promise<void> {
     }
   }
 
+  const name = escV2(ctx.user.display_name || 'friend');
+
+  // No tasks at all
   if (todayOpen.length === 0 && noDated.length === 0 && todayDone.length === 0) {
-    await ctx.reply('📋 No tasks for today\\. Try saying "remind me to\\.\\.\\." to create one\\!', { parse_mode: 'MarkdownV2' });
+    await ctx.reply(escV2(pick(emptyDayPhrases, ctx.user.display_name || 'friend')), { parse_mode: 'MarkdownV2' });
+    return;
+  }
+
+  // All done!
+  if (todayOpen.length === 0 && noDated.length === 0 && todayDone.length > 0) {
+    const lines: string[] = [escV2(pick(allDonePhrases, ctx.user.display_name || 'friend'))];
+    lines.push('');
+    lines.push('✅ _Completed:_\n');
+    for (const t of todayDone) {
+      lines.push(`✓  ~${escV2(t.title)}~`);
+    }
+    await ctx.reply(lines.join('\n'), { parse_mode: 'MarkdownV2' });
     return;
   }
 
@@ -141,7 +156,7 @@ async function showTodayTasks(ctx: BotContext): Promise<void> {
   }
 
   if (todayDone.length > 0) {
-    lines.push('\n☑️ _Completed:_\n');
+    lines.push('\n✅ _Completed:_\n');
     for (const t of todayDone) {
       lines.push(`✓  ~${escV2(t.title)}~`);
     }
@@ -154,7 +169,7 @@ async function showAllTasks(ctx: BotContext): Promise<void> {
   const tasks = await getTasksByUser(ctx.user.id, { includeDone: false, limit: 50 });
 
   if (tasks.length === 0) {
-    await ctx.reply('📋 No open tasks\\!', { parse_mode: 'MarkdownV2' });
+    await ctx.reply(escV2(pick(noOpenPhrases, ctx.user.display_name || 'friend')), { parse_mode: 'MarkdownV2' });
     return;
   }
 
@@ -172,7 +187,7 @@ async function showDoneTasks(ctx: BotContext): Promise<void> {
   const done = tasks.filter((t) => t.is_done);
 
   if (done.length === 0) {
-    await ctx.reply('No completed tasks yet\\.');
+    await ctx.reply(escV2('No completed tasks yet. Get to work! :)'), { parse_mode: 'MarkdownV2' });
     return;
   }
 
@@ -230,7 +245,7 @@ async function showWeekView(ctx: BotContext): Promise<void> {
   }
 
   if (!hasAny) {
-    await ctx.reply('📅 No tasks this week\\. Enjoy your free time\\!', { parse_mode: 'MarkdownV2' });
+    await ctx.reply(escV2(pick(emptyWeekPhrases, ctx.user.display_name || 'friend')), { parse_mode: 'MarkdownV2' });
     return;
   }
 
@@ -427,3 +442,39 @@ function escMd(text: string): string {
 function escV2(text: string): string {
   return text.replace(/[_*[\]()~`>#+\-=|{}.!\\]/g, '\\$&');
 }
+
+/** Pick a random phrase, injecting the user's name */
+function pick(phrases: string[], name: string): string {
+  const idx = Math.floor(Math.random() * phrases.length);
+  return phrases[idx].replace('{name}', name);
+}
+
+const emptyDayPhrases = [
+  "Your day is wide open, {name}! No tasks for today. Say \"remind me to...\" to add something.",
+  "Nothing on the agenda today! Want to add a task? Just tell me what you need to do.",
+  "Clean slate today, {name}. Enjoy it or say \"remind me to...\" to plan something!",
+  "No tasks for today. Feeling productive? Tell me what you'd like to get done!",
+  "Today's looking free, {name}! Need to plan something? I'm here.",
+];
+
+const allDonePhrases = [
+  "Amazing, {name}! Everything's done for today. Take a well-deserved break!",
+  "Wow, all done! Great job, {name}. You crushed it today!",
+  "{name}, you're on fire! All tasks completed. Rest up, you earned it.",
+  "Look at you go, {name}! Nothing left to do. Enjoy the rest of your day!",
+  "All caught up! Nice work, {name}. Treat yourself to something nice.",
+];
+
+const noOpenPhrases = [
+  "No open tasks! You're all caught up, {name}.",
+  "Nothing pending! Want to add something? Just say \"remind me to...\"",
+  "All clear, {name}! Your task list is empty.",
+  "Zero tasks! Either you're super productive or very relaxed. Both are great!",
+];
+
+const emptyWeekPhrases = [
+  "Nothing planned this week, {name}. Enjoy the calm!",
+  "Your week is wide open! Want to plan something? Just tell me.",
+  "No tasks this week. Time to recharge, {name}!",
+  "A completely free week! Rare and beautiful. Or just say \"remind me to...\" to change that.",
+];
