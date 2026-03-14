@@ -144,14 +144,14 @@ npx tsc --init  # strict: true, outDir: dist, rootDir: src
 - [ ] Verify: send "help" → get skill list, send "hello" → get chat response (Step 1.10)
 
 ### Step 1.10 — Main Message Handler
-- [ ] Create `src/bot/handlers/message.handler.ts`:
+- [x] Create `src/bot/handlers/message.handler.ts`:
   - Text comes in (from text or voice pipeline)
-  - Get recent messages for context
+  - Build RoutingContext with user info + skill descriptions
   - Call LLM router with text + context
   - Find skill by intent from registry
   - Execute skill handler
-  - Save user + assistant messages to history
-- [ ] Wire everything together in bot.ts
+  - Confidence thresholds (< 0.3 fallback, < 0.6 clarify)
+- [x] Wire everything together in bot.ts (skills registered, voice→handler, text→handler)
 - [ ] Verify: full flow works — message → intent → skill → response
 
 ### Step 1.11 — Confirmation System

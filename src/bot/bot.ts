@@ -12,6 +12,14 @@ import {
   handleDigestCallback,
 } from '../features/onboarding/onboarding.handler.js';
 import { handleVoice } from '../features/voice/voice.handler.js';
+import { handleMessage } from './handlers/message.handler.js';
+import { registerSkill } from '../core/skills/registry.js';
+import { chatSkill } from '../features/chat/chat.skill.js';
+import { helpSkill } from '../features/help/help.skill.js';
+
+// Register skills
+registerSkill(chatSkill);
+registerSkill(helpSkill);
 
 export const bot = new Bot<BotContext>(env.BOT_TOKEN);
 
@@ -61,7 +69,7 @@ bot.on('callback_query:data', async (ctx) => {
   if (data.startsWith('digest:')) {
     const parts = data.split(':');
     const type = parts[1] as 'morning' | 'evening';
-    const time = parts.slice(2).join(':'); // rejoin in case time has colons
+    const time = parts.slice(2).join(':');
     await handleDigestCallback(ctx, type, time);
     return;
   }
@@ -73,18 +81,15 @@ bot.on('callback_query:data', async (ctx) => {
 // Onboarding guard — blocks non-onboarded users from reaching main handlers
 bot.use(onboardingGuard);
 
-// Voice message handler
+// Voice message handler — transcribe then process as text
 bot.on('message:voice', async (ctx) => {
   const text = await handleVoice(ctx);
   if (text) {
-    // TODO: pass to main message handler (Step 1.10)
-    const name = ctx.user.display_name || 'friend';
-    await ctx.reply(`${name}, I heard you! I'll learn to process this soon.`);
+    await handleMessage(ctx, text);
   }
 });
 
-// Temporary text handler — confirms full pipeline is working (post-onboarding)
+// Text message handler — main entry point for all text
 bot.on('message:text', (ctx) => {
-  const name = ctx.user.display_name || 'friend';
-  return ctx.reply(`Hello, ${name}! You're fully onboarded. I'll learn to chat soon!`);
+  return handleMessage(ctx, ctx.message.text);
 });
