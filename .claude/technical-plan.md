@@ -247,22 +247,22 @@ npx tsc --init  # strict: true, outDir: dist, rootDir: src
 - [ ] Tests for both
 
 ### Step 2.8 — Reminder Cron Job
-- [ ] Install: `npm i node-cron @types/node-cron`
-- [ ] Create `src/core/cron/reminder-cron.ts`: every minute, query due reminders, send messages
-- [ ] Snooze keyboard: [+15min] [+1hr] [Done]
-- [ ] Wire into `src/index.ts`
-- [ ] Tests
+- [x] Install: `npm i node-cron @types/node-cron`
+- [x] Create `src/core/cron/reminder-cron.ts`: every minute, query due reminders, send messages
+- [x] Snooze keyboard: [+15min] [+1hr] [Done]
+- [x] Wire into `src/index.ts`
+- [x] Tests
 
 ### Step 2.9 — Snooze & Task Done Callbacks
-- [ ] Add `snoozeKeyboard()` to keyboards.ts
-- [ ] Create `src/features/tasks/task.callbacks.ts` — handleSnooze, handleTaskDone
-- [ ] Wire callbacks in bot.ts
-- [ ] Tests
+- [x] Add `snoozeKeyboard()` to keyboards.ts
+- [x] Create `src/features/tasks/task.callbacks.ts` — handleSnooze, handleTaskDone
+- [x] Wire callbacks in bot.ts
+- [x] Tests
 
 ### Step 2.10 — Polish & Help Update
-- [ ] Update help skill with task capabilities
-- [ ] Update mock router for all task patterns
-- [ ] Update CONTEXT.md and planning docs
+- [x] Update help skill with task capabilities (reminders, snooze, list views)
+- [x] Update mock router for all task patterns (param extraction for all intents)
+- [x] Update CONTEXT.md and planning docs
 
 ### Step 2.11 — Daily Digests (defer to v2)
 - [ ] Morning/evening digest cron (can be added later)

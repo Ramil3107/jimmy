@@ -31,29 +31,65 @@
 
 ---
 
-## Phase 1.2 — Users Table (NEXT)
+## Phase 2 — Deploy to Railway 🚀 (CURRENT)
 
-### 1. Run the Users Migration
-- [ ] I will create the SQL migration file at `src/db/migrations/001_users.sql`
-- [ ] Open your Supabase dashboard → **SQL Editor**
-- [ ] Copy-paste the contents of `001_users.sql` and run it
-- [ ] Verify: go to **Table Editor** → you should see a `users` table
+### Prerequisites
+- [x] GitHub repo exists: `Ramil3107/jimmy`
+- [ ] Push latest code to GitHub (I'll help with this)
 
-> **Why**: The bot needs a users table to store Telegram users, their language, timezone, and onboarding state.
+### 1. Create a Railway Account
+- [ ] Go to [railway.app](https://railway.app) and sign up (GitHub login recommended)
+- [ ] You get $5/month free on the Hobby plan
+
+### 2. Create a New Project
+- [ ] Click **"New Project"** → **"Deploy from GitHub Repo"**
+- [ ] Select `Ramil3107/jimmy`
+- [ ] Railway will detect the Dockerfile and start building
+
+### 3. Set Environment Variables
+- [ ] In Railway dashboard, click on your service → **Variables** tab
+- [ ] Add these variables (click **"New Variable"** for each):
+
+```
+BOT_TOKEN=<your telegram bot token>
+SUPABASE_URL=<your supabase project URL>
+SUPABASE_KEY=<your supabase anon key>
+OPENAI_API_KEY=<your OpenAI API key>
+MOCK_LLM=false
+DEV_MODE=false
+LOG_LEVEL=info
+```
+
+> ⚠️ **MOCK_LLM must be `false`** in production so the bot uses real OpenAI for intent routing.
+> ⚠️ **DEV_MODE must be `false`** in production.
+> 📝 Copy these values from your local `.env` file.
+
+### 4. Deploy
+- [ ] After setting variables, Railway will auto-redeploy
+- [ ] Check the **Deployments** tab — wait for status to show **"Success"**
+- [ ] Check **Logs** tab — you should see:
+  ```
+  Jimmy bot is running
+  Reminder cron started (every minute)
+  ```
+
+### 5. Test the Bot
+- [ ] Open Telegram, send a message to your bot
+- [ ] Try: "remind me to test railway in 2 minutes"
+- [ ] Verify: you get a confirmation, then a reminder 2 minutes later with snooze buttons
+
+### Troubleshooting
+- **Build fails**: Check Deployments → click the failed deploy → read the build logs
+- **Bot doesn't respond**: Check Logs tab for errors. Most common: wrong BOT_TOKEN
+- **"Invalid environment variables"**: You're missing a required env var — check the Variables tab
+- **Reminders not firing**: Make sure MOCK_LLM=false so dates get parsed correctly
 
 ---
 
-## Future Tasks (will be detailed when needed)
+## Future Tasks
 
-### Phase 1.6 — Voice Processing
-- [ ] Get an **OpenAI API key** from [platform.openai.com](https://platform.openai.com)
-- [ ] Add it to `.env` as `OPENAI_API_KEY=sk-...`
+### Phase 3 — Notes (M3)
+- Will be detailed when we start M3
 
-### Phase 1.7 — LLM Router
-- [ ] Get an **Anthropic API key** from [console.anthropic.com](https://console.anthropic.com)
-- [ ] Add it to `.env` as `ANTHROPIC_API_KEY=sk-ant-...`
-
-### Deployment (when ready)
-- [ ] Create a [Railway](https://railway.app) account
-- [ ] Connect your GitHub repo
-- [ ] Set environment variables in Railway dashboard
+### Phase 4 — Google Calendar (M4)
+- Will need Google Cloud project + OAuth credentials

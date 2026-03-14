@@ -6,8 +6,8 @@
 
 ## Current Status
 
-**Phase**: M2 in progress
-**Milestone**: M2 - Tasks & Reminders (Steps 2.1-2.5 done, 2.6-2.7 done inline)
+**Phase**: M2 complete (except daily digests, deferred)
+**Milestone**: M2 - Tasks & Reminders (Steps 2.1-2.10 done)
 **Last Updated**: 2026-03-14
 
 ---
@@ -24,7 +24,7 @@
 - Chat history (saved to DB, last 20 as LLM context)
 - Confirmation system (pending actions, 5min TTL)
 - Rate limiter (30 msg/min)
-- 89 tests across 13 files
+- 105 tests across 15 files
 
 ### M2 — Tasks (IN PROGRESS)
 - Tasks table created in Supabase
@@ -37,10 +37,7 @@
 - LLM prompt has explicit task intent routing rules
 
 ### What's NOT Done Yet (M2)
-- Step 2.8: Reminder cron job (node-cron, send reminders when remind_at <= now)
-- Step 2.9: Snooze keyboard (+15min, +1hr, Done) on reminder messages
-- Step 2.10: Polish — update help skill, mock router, docs
-- Step 2.11: Daily digests (deferred)
+- Step 2.11: Daily digests (deferred to later)
 
 ---
 
@@ -59,16 +56,14 @@
 
 - Node.js + TypeScript, grammY, Supabase, OpenAI GPT-4o-mini
 - Vitest for tests, pino for logging, zod for env validation
-- 89 tests, all passing
+- 105 tests, all passing
 
 ---
 
 ## Next Steps
 
-1. **Step 2.8** — Reminder cron (npm i node-cron, query due reminders, send messages)
-2. **Step 2.9** — Snooze callbacks (+15min, +1hr, Done)
-3. **Step 2.10** — Polish help text, mock router, docs
-4. Then: Deploy to Railway or start M3 (Notes)
+1. Deploy to Railway (M0 Step 0.6)
+2. Or start M3 — Notes
 
 ---
 
@@ -78,6 +73,6 @@
 |-----------|--------|------------|
 | M0 - Skeleton & Deploy | 🟡 80% (deploy deferred) | 80% |
 | M1 - Core Assistant | ✅ Complete | 100% |
-| M2 - Tasks & Reminders | 🟡 In Progress | ~70% |
+| M2 - Tasks & Reminders | ✅ Complete (digests deferred) | ~95% |
 | M3 - Notes | ⚪ Planned | 0% |
 | M4 - Google Calendar | ⚪ Planned | 0% |

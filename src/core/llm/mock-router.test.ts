@@ -26,6 +26,37 @@ describe('mockRouteMessage', () => {
   it('routes task-related messages', () => {
     const result = mockRouteMessage('remind me to call mom', context);
     expect(result.intent).toBe('create_task');
+    expect(result.params).toEqual({ title: 'call mom' });
+  });
+
+  it('routes "show my tasks" to list_tasks with today view', () => {
+    const result = mockRouteMessage('show my tasks', context);
+    expect(result.intent).toBe('list_tasks');
+    expect(result.params).toEqual({ view: 'today' });
+  });
+
+  it('routes "show all tasks" to list_tasks with all view', () => {
+    const result = mockRouteMessage('show all my tasks', context);
+    expect(result.intent).toBe('list_tasks');
+    expect(result.params).toEqual({ view: 'all' });
+  });
+
+  it('routes "weekly tasks" to list_tasks with week view', () => {
+    const result = mockRouteMessage('show my weekly tasks', context);
+    expect(result.intent).toBe('list_tasks');
+    expect(result.params).toEqual({ view: 'week' });
+  });
+
+  it('routes "mark X as done" to complete_task with title_query', () => {
+    const result = mockRouteMessage('mark call mom as done', context);
+    expect(result.intent).toBe('complete_task');
+    expect(result.params).toHaveProperty('title_query', 'call mom');
+  });
+
+  it('routes "delete X task" to delete_task with title_query', () => {
+    const result = mockRouteMessage('delete the grocery task', context);
+    expect(result.intent).toBe('delete_task');
+    expect(result.params).toHaveProperty('title_query', 'grocery');
   });
 
   it('routes note-related messages', () => {

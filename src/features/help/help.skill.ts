@@ -16,10 +16,14 @@ export const helpSkill: Skill = {
 
     const text =
       `Hey ${name}! Here\'s what I can do:\n\n` +
-      '💬 *Chat* — Talk to me about anything\n' +
-      '📋 *Tasks* — "Remind me to call mom tomorrow at 3pm"\n' +
-      '📝 *Notes* — "Remember: pancake recipe — 2 eggs, flour, milk"\n' +
-      '📅 *Calendar* — "What\'s on my schedule today?" (coming soon)\n\n' +
+      '💬 *Chat* — Talk to me about anything\n\n' +
+      '📋 *Tasks*\n' +
+      '  • "Remind me to call mom tomorrow at 3pm"\n' +
+      '  • "Show my tasks" / "What\'s on for this week?"\n' +
+      '  • "Mark call mom as done"\n' +
+      '  • I\'ll send you reminders with snooze options!\n\n' +
+      '📝 *Notes* — coming soon\n' +
+      '📅 *Calendar* — coming soon\n\n' +
       '🎤 You can also send voice messages!\n\n' +
       '💡 Just talk to me naturally — I\'ll figure out what you need!';
 

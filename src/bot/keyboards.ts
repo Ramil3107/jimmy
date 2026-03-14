@@ -65,3 +65,10 @@ export function confirmCancelKeyboard(actionId: string): InlineKeyboard {
     .text('✅ Confirm', `confirm:${actionId}`)
     .text('❌ Cancel', `cancel:${actionId}`);
 }
+
+export function snoozeKeyboard(taskId: string): InlineKeyboard {
+  return new InlineKeyboard()
+    .text('+15min', `snooze:${taskId}:15`)
+    .text('+1hr', `snooze:${taskId}:60`)
+    .text('✅ Done', `snooze_done:${taskId}`);
+}
