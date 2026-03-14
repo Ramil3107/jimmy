@@ -58,7 +58,9 @@ describe('handleMessage', () => {
     });
     mockGetSkillByIntent.mockReturnValue({
       name: 'chat',
-      handler: vi.fn(),
+      handler: vi.fn(async (c: any, p: any) => {
+        if (p.response_text) await c.reply(p.response_text);
+      }),
     });
 
     const ctx = makeCtx();

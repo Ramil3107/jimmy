@@ -32,7 +32,7 @@ export async function handleMessage(ctx: BotContext, text: string): Promise<void
 
     const result = await routeMessage(text, context);
 
-    logger.debug({ intent: result.intent, confidence: result.confidence }, 'Intent routed');
+    logger.debug({ intent: result.intent, confidence: result.confidence, params: result.params }, 'Intent routed');
 
     // Save user message
     saveMessage(user.id, 'user', text, result.intent).catch((err) => {
@@ -57,21 +57,16 @@ export async function handleMessage(ctx: BotContext, text: string): Promise<void
       return;
     }
 
-    // Find and execute skill
+    // Find skill for this intent
     const skill = getSkillByIntent(result.intent);
 
     if (skill) {
-      await skill.handler(ctx, { ...result.params, intent: result.intent });
-
-      // Mutation skills handle their own replies (confirmation flow)
-      // Help and other self-replying skills also return here
-      if (skill.mutatesData || skill.name === 'help') {
-        saveMessage(user.id, 'user', text, result.intent).catch(() => {});
-        return;
-      }
+      // Skill handles its own reply — pass intent and LLM response_text
+      await skill.handler(ctx, { ...result.params, intent: result.intent, response_text: result.response_text });
+      return;
     }
 
-    // Send LLM response text (for chat and non-mutation skills)
+    // No skill found — send LLM response text (for chat, unsupported, etc.)
     if (result.response_text) {
       await ctx.reply(result.response_text);
       saveMessage(user.id, 'assistant', result.response_text, result.intent).catch((err) => {
