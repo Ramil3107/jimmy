@@ -10,7 +10,6 @@ const envSchema = z.object({
   BOT_TOKEN: z.string().min(1, 'BOT_TOKEN is required'),
   SUPABASE_URL: z.string().url('SUPABASE_URL must be a valid URL'),
   SUPABASE_KEY: z.string().min(1, 'SUPABASE_KEY is required'),
-  ANTHROPIC_API_KEY: z.string().optional(),
   OPENAI_API_KEY: z.string().optional(),
   DEV_MODE: boolString,
   MOCK_LLM: z

@@ -295,10 +295,10 @@ users
 ## 7. LLM Strategy
 
 ### Model Usage
-- **Intent routing**: Claude Sonnet (fast, cheap, good enough for classification)
-- **Free chat**: Claude Sonnet (same model, different system prompt)
-- **Digests & summaries**: Claude Sonnet
-- **Complex analysis** (future: RAG, reviews): Claude Sonnet or Opus if needed
+- **Intent routing**: GPT-4o-mini (fast, cheap, good for classification)
+- **Free chat**: GPT-4o-mini (same model, different system prompt)
+- **Digests & summaries**: GPT-4o-mini
+- **Complex analysis** (future: RAG, reviews): GPT-4o if needed
 
 ### Context Window Management
 Every LLM request includes:
@@ -355,7 +355,7 @@ Every LLM request includes:
 
 ### Dev Mode Features
 - `DEV_MODE=true`: pretty logs, verbose output
-- `MOCK_LLM=true`: no API calls, pattern-matched responses
+- `MOCK_LLM=true`: no OpenAI API calls, pattern-matched responses
 - `scripts/seed.ts`: populate DB with test data
 - `scripts/test-llm.ts`: run intent routing quality check
 

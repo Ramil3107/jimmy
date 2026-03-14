@@ -62,67 +62,65 @@ npx tsc --init  # strict: true, outDir: dist, rootDir: src
 - [x] Verify: app starts without DB errors in logs
 
 ### Step 1.2 — Users Table
-- [ ] Create `src/db/migrations/001_users.sql` (see MILESTONE_1.md for schema)
-- [ ] Run migration in Supabase SQL editor (or create a migrate script)
-- [ ] Create `src/features/users/user.types.ts` — User type
-- [ ] Create `src/features/users/user.repo.ts`:
+- [x] Create `src/db/migrations/001_users.sql` (see MILESTONE_1.md for schema)
+- [x] Run migration in Supabase SQL editor
+- [x] Create `src/features/users/user.types.ts` — User type
+- [x] Create `src/features/users/user.repo.ts`:
   - `create(data)` → User
   - `getByTelegramId(telegramId)` → User | null
   - `update(id, data)` → User
 - [ ] Verify: manually insert a user, query it back
 
 ### Step 1.3 — Auth Middleware
-- [ ] Create `src/bot/middleware/auth.ts`:
+- [x] Create `src/bot/middleware/auth.ts`:
   - Extract telegram_id from `ctx.from.id`
   - Call `userRepo.getByTelegramId()` → if null, create
   - Set `ctx.user = user`
   - Update `last_active_at`
-- [ ] Create `src/bot/context.ts` — extended BotContext type with `user` field
-- [ ] Register middleware in bot.ts
-- [ ] Remove echo handler
-- [ ] Verify: send message → check Supabase, user row exists
+- [x] Create `src/bot/context.ts` — extended BotContext type with `user` field
+- [x] Register middleware in bot.ts
+- [x] Remove echo handler
+- [x] Verify: send message → check Supabase, user row exists
 
 ### Step 1.4 — Onboarding Guard
-- [ ] Create `src/bot/middleware/onboarding-guard.ts`:
+- [x] Create `src/bot/middleware/onboarding-guard.ts`:
   - If `ctx.user.onboarding_complete === false` → call onboarding handler, return
   - Otherwise → next()
-- [ ] Register after auth middleware
-- [ ] Verify: new user sends message → gets onboarding (not echo)
+- [x] Register after auth middleware
+- [x] Verify: new user sends message → gets onboarding (not echo)
 
 ### Step 1.5 — Onboarding Flow
-- [ ] Create `src/features/onboarding/onboarding.handler.ts`
-- [ ] Create `src/bot/keyboards.ts` — reusable inline keyboard builders
-- [ ] Implement steps 0-5 (see MILESTONE_1.md Phase 2)
-- [ ] Each step: validate input → save to DB → advance step → show next
-- [ ] Handle unexpected input: re-ask the current step politely
-- [ ] On completion: set `onboarding_complete = true`
-- [ ] Verify: go through full onboarding, check all fields in DB
+- [x] Create `src/features/onboarding/onboarding.handler.ts`
+- [x] Create `src/bot/keyboards.ts` — reusable inline keyboard builders
+- [x] Implement steps 0-6 (welcome → language → name → timezone → morning digest → evening digest → tour)
+- [x] Each step: validate input → save to DB → advance step → show next
+- [x] Handle unexpected input: re-ask the current step politely
+- [x] On completion: set `onboarding_complete = true`
+- [x] Verify: go through full onboarding, check all fields in DB
 
 ### Step 1.6 — Voice Processing
-- [ ] Install: `npm i fluent-ffmpeg @types/fluent-ffmpeg openai`
-- [ ] Create `src/features/voice/transcriber.ts`:
-  - `transcribe(oggBuffer: Buffer) → string`
-  - Convert ogg → mp3 via ffmpeg (temp files, cleanup after)
-  - Send to Whisper API
+- [x] Install: `npm i openai` (Whisper accepts .ogg directly — no ffmpeg needed)
+- [x] Create `src/features/voice/transcriber.ts`:
+  - `transcribe(audioBuffer: Buffer, language?) → string`
+  - Send .ogg directly to Whisper API
   - Return transcription text
-- [ ] Create `src/features/voice/voice.handler.ts`:
+- [x] Create `src/features/voice/voice.handler.ts`:
   - Download file via grammY
   - Call transcriber
   - Reply with "🎤 Heard: ..."
-  - Pass text to main handler
-- [ ] Register voice handler in bot.ts
-- [ ] Verify: send voice message → bot shows transcription
+  - Pass text to main handler (TODO: Step 1.10)
+- [x] Register voice handler in bot.ts
+- [x] Verify: send voice message → bot shows transcription
 
 ### Step 1.7 — LLM Router (basic)
-- [ ] Install: `npm i @anthropic-ai/sdk`
-- [ ] Create `src/core/llm/types.ts` — IntentResult interface
-- [ ] Create `src/core/llm/prompts/router.v1.ts` — system prompt builder
-- [ ] Create `src/core/llm/router.ts`:
+- [x] Create `src/core/llm/types.ts` — IntentResult, RoutingContext, SkillDescription
+- [x] Create `src/core/llm/prompts/router.v1.ts` — system prompt builder
+- [x] Create `src/core/llm/router.ts`:
   - `routeMessage(text, context) → IntentResult`
-  - Send to Claude with system prompt + user message
-  - Parse JSON response
+  - Send to OpenAI GPT-4o-mini with system prompt + user message
+  - Parse JSON response (using json_object response format)
   - Handle parse errors gracefully
-- [ ] Verify: test with a few messages, check JSON output in logs
+- [ ] Verify: test with a few messages, check JSON output in logs (will test after Step 1.10)
 
 ### Step 1.8 — Mock LLM Router
 - [ ] Create `src/core/llm/mock-router.ts`:
@@ -183,9 +181,9 @@ npx tsc --init  # strict: true, outDir: dist, rootDir: src
 - [ ] Verify: spam messages → get rate limit response
 
 ### Step 1.14 — Tests
-- [ ] Install: `npm i -D vitest`
-- [ ] Create `vitest.config.ts`
-- [ ] Test: user repository (mock Supabase client)
+- [x] Install: `npm i -D vitest`
+- [x] Create `vitest.config.ts`
+- [x] Test: user repository (mock Supabase client)
 - [ ] Test: pending actions (set, get, TTL, confirm, cancel)
 - [ ] Test: skill registry (register, find, list)
 - [ ] Create `scripts/test-llm.ts` — intent routing quality tests

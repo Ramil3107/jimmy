@@ -18,7 +18,7 @@
 - [x] Enable Row Level Security (default on new tables)
 
 ### 1.2 Users Table
-- [ ] Create migration `001_users.sql`:
+- [x] Create migration `001_users.sql`:
   ```sql
   CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -35,19 +35,19 @@
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
   );
   ```
-- [ ] Create `src/features/users/user.repo.ts` — create, getByTelegramId, update
-- [ ] TypeScript types for User
+- [x] Create `src/features/users/user.repo.ts` — create, getByTelegramId, update
+- [x] TypeScript types for User
 
 ### 1.3 Auth Middleware
-- [ ] Create `src/bot/middleware/auth.ts`:
+- [x] Create `src/bot/middleware/auth.ts`:
   - Get telegram_id from grammY context
   - Find or create user in DB
   - Attach `ctx.user` to context
   - Update `last_active_at`
-- [ ] Type the extended grammY context
+- [x] Type the extended grammY context
 
 ### 1.4 Onboarding Guard Middleware
-- [ ] Create `src/bot/middleware/onboarding-guard.ts`:
+- [x] Create `src/bot/middleware/onboarding-guard.ts`:
   - If `onboarding_complete = false` → redirect to onboarding handler
   - All other handlers blocked
   - Exception: `/start`
@@ -57,33 +57,32 @@
 ## Phase 2 — Onboarding
 
 ### 2.1 Onboarding Flow
-- [ ] Create `src/features/onboarding/onboarding.handler.ts`
-- [ ] Step 0 — Welcome:
+- [x] Create `src/features/onboarding/onboarding.handler.ts`
+- [x] Step 0 — Welcome:
   - Bot introduces itself, brief capabilities overview
   - Auto-advance to step 1
-- [ ] Step 1 — Language:
+- [x] Step 1 — Language:
   - Inline keyboard with common languages (🇷🇺 🇬🇧 🇪🇸 🇩🇪 🇫🇷 🇵🇹 ...)
   - Also option "Other" → user types language name
   - Save to `language` field
   - **From this point**: all bot messages via LLM in user's language
-- [ ] Step 2 — Name:
+- [x] Step 2 — Name:
   - Ask "How should I address you?"
   - Save to `display_name`
-- [ ] Step 3 — Timezone:
+- [x] Step 3 — Timezone:
   - Inline keyboard by region (Europe → cities, Asia → cities...)
-  - Option: send geolocation for auto-detect
   - Save to `timezone`
-- [ ] Step 4 — Digest times:
+- [x] Step 4 — Digest times:
   - Morning digest time (default 08:00, show alternatives)
   - Evening digest time (default 21:00, show alternatives)
-- [ ] Step 5 — Mini tour:
+- [x] Step 5 — Mini tour:
   - Show 3-4 examples of what bot can do
   - Set `onboarding_complete = true`
 
 ### 2.2 Technical Details
-- [ ] Onboarding handler: switch by `onboarding_step`
-- [ ] Input validation at each step
-- [ ] Handle unexpected input (wrong type, gibberish) — re-ask politely
+- [x] Onboarding handler: switch by `onboarding_step`
+- [x] Input validation at each step
+- [x] Handle unexpected input (wrong type, gibberish) — re-ask politely
 - [ ] `/setup` command — restart onboarding for reconfiguration
 
 ### 2.3 Language Approach (NO i18n)
@@ -97,28 +96,26 @@
 
 ## Phase 3 — Voice Messages
 
-- [ ] Create `src/features/voice/voice.handler.ts`
-- [ ] Handler for `message:voice` in grammY
-- [ ] Download .ogg file via `ctx.getFile()`
-- [ ] Convert .ogg → .mp3 via fluent-ffmpeg
-  - Ensure ffmpeg is in Docker image
-  - Create temp file, delete after processing
-- [ ] Send to Whisper API, get transcription
-- [ ] Show user: `🎤 Heard: "transcribed text"`
-- [ ] Pass transcription into main text pipeline
-- [ ] Edge cases:
-  - [ ] Too long voice (>5 min) — warn and truncate
-  - [ ] Empty transcription — "Couldn't make that out, try again"
-  - [ ] Whisper API error — graceful message
-  - [ ] Show typing indicator while processing
+- [x] Create `src/features/voice/voice.handler.ts`
+- [x] Create `src/features/voice/transcriber.ts`
+- [x] Handler for `message:voice` in grammY
+- [x] Download .ogg file via `ctx.getFile()`
+- [x] Send .ogg directly to Whisper API (no ffmpeg conversion needed)
+- [x] Show user: `🎤 Heard: "transcribed text"`
+- [ ] Pass transcription into main text pipeline (Step 1.10)
+- [x] Edge cases:
+  - [x] Too long voice (>5 min) — warn
+  - [x] Empty transcription — "Couldn't make that out, try again"
+  - [x] Whisper API error — graceful message
+  - [x] Show typing indicator while processing
 
 ---
 
 ## Phase 4 — LLM Intent Router
 
-### 4.1 Claude Integration
-- [ ] Create `src/core/llm/router.ts`
-- [ ] `routeMessage(text, context) → IntentResult`
+### 4.1 OpenAI Integration
+- [x] Create `src/core/llm/router.ts`
+- [x] `routeMessage(text, context) → IntentResult`
 - [ ] IntentResult type:
   ```typescript
   interface IntentResult {
@@ -131,8 +128,8 @@
   ```
 
 ### 4.2 System Prompt v1
-- [ ] Create `src/core/llm/prompts/router.v1.ts`
-- [ ] Prompt includes:
+- [x] Create `src/core/llm/prompts/router.v1.ts`
+- [x] Prompt includes:
   - Role: strict intent router for personal assistant
   - User context: name, language, timezone, current time
   - Available skills (from Skill Registry)
@@ -217,8 +214,8 @@
 ## Testing
 
 ### Unit Tests
-- [ ] Setup Vitest
-- [ ] Tests for user repository (with mock Supabase)
+- [x] Setup Vitest
+- [x] Tests for user repository (with mock Supabase)
 - [ ] Tests for pending actions (TTL, confirm, cancel)
 - [ ] Tests for skill registry (register, find, list)
 
