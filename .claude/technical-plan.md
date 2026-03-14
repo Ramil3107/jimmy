@@ -168,11 +168,12 @@ npx tsc --init  # strict: true, outDir: dist, rootDir: src
 - [x] Verify: unit tests pass (full integration test in M2 with tasks)
 
 ### Step 1.12 — Messages Table & History
-- [ ] Create `src/db/migrations/002_messages.sql`
-- [ ] Create `src/features/messages/message.repo.ts`:
-  - `save(userId, role, content, intent)`
-  - `getRecent(userId, limit=20)`
-- [ ] Integrate into message handler: save both user and assistant messages
+- [x] Create `src/db/migrations/002_messages.sql`
+- [x] Create `src/features/messages/message.types.ts` and `message.repo.ts`:
+  - `saveMessage(userId, role, content, intent)`
+  - `getRecentMessages(userId, limit=20)` — returns chronological order
+- [x] Integrate into message handler: save user + assistant messages, load history for LLM context
+- [ ] Run migration in Supabase SQL editor (USER ACTION REQUIRED)
 - [ ] Verify: check messages table after conversation
 
 ### Step 1.13 — Rate Limiter
