@@ -4,12 +4,12 @@ import type { BotContext } from '../../bot/context.js';
 export const helpSkill: Skill = {
   name: 'help',
   intents: ['help'],
-  description: 'Show what the bot can do, list available skills and commands.',
+  description: 'ONLY when user explicitly asks what the bot can do or types /help. NOT for general questions.',
   examples: [
-    'help',
-    'what can you do',
     '/help',
+    'what can you do?',
     'show me your features',
+    'list your commands',
   ],
   handler: async (ctx: BotContext): Promise<void> => {
     const name = ctx.user.display_name || 'friend';

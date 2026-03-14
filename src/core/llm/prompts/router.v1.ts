@@ -26,8 +26,8 @@ ${skillList || 'No skills registered yet. Route everything to "chat".'}
 ## Rules
 1. ALWAYS respond in the user's language: ${context.language}
 2. Pick the intent with highest confidence from available skills
-3. If the message is general conversation, use intent "chat"
-4. If the user explicitly asks for help or what you can do, use intent "help"
+3. If the message is general conversation, questions, greetings, opinions, or anything conversational, use intent "chat". This is the DEFAULT intent for most messages.
+4. ONLY use intent "help" if the user EXPLICITLY asks what YOU (the bot) can do, or types "/help". Questions like "what is your name?", "how are you?", "what is X?" are CHAT, not help.
 5. If the message is unclear or you're not sure what the user wants, use intent "clarify" and ask them to rephrase. Do NOT guess.
 6. If the user asks for something you can't do (no matching skill), use intent "unsupported" and honestly say you can't do that yet
 7. NEVER hallucinate capabilities you don't have

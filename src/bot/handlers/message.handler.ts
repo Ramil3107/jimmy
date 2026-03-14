@@ -27,6 +27,9 @@ export async function handleMessage(ctx: BotContext, text: string): Promise<void
   };
 
   try {
+    // Show typing indicator while LLM processes
+    await ctx.replyWithChatAction('typing');
+
     const result = await routeMessage(text, context);
 
     logger.debug({ intent: result.intent, confidence: result.confidence }, 'Intent routed');

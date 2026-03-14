@@ -40,6 +40,7 @@ function makeCtx(): BotContext {
   return {
     user: { ...baseUser },
     reply: vi.fn(),
+    replyWithChatAction: vi.fn(),
   } as unknown as BotContext;
 }
 

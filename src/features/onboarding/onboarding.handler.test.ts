@@ -88,7 +88,7 @@ describe('handleOnboarding', () => {
     await handleOnboarding(ctx);
 
     expect(ctx.reply).toHaveBeenCalledWith(
-      expect.stringContaining('timezone'),
+      expect.stringContaining('UTC offset'),
       expect.objectContaining({ reply_markup: expect.anything() }),
     );
   });

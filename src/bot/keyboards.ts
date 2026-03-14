@@ -26,94 +26,38 @@ export function languageKeyboard(): InlineKeyboard {
     .text('🌍 Other (type it)', 'lang:other');
 }
 
-export function timezoneRegionKeyboard(): InlineKeyboard {
+/** UTC offset keyboard — grouped in rows of 3 */
+export function utcOffsetKeyboard(): InlineKeyboard {
   return new InlineKeyboard()
-    .text('🇪🇺 Europe', 'tz_region:europe')
-    .text('🌏 Asia', 'tz_region:asia')
+    .text('UTC-8', 'tz:Etc/GMT+8')
+    .text('UTC-7', 'tz:Etc/GMT+7')
+    .text('UTC-6', 'tz:Etc/GMT+6')
     .row()
-    .text('🇺🇸 Americas', 'tz_region:americas')
-    .text('🌍 Africa', 'tz_region:africa')
+    .text('UTC-5', 'tz:Etc/GMT+5')
+    .text('UTC-4', 'tz:Etc/GMT+4')
+    .text('UTC-3', 'tz:Etc/GMT+3')
     .row()
-    .text('🌊 Pacific', 'tz_region:pacific')
-    .text('🕐 UTC', 'tz:UTC')
+    .text('UTC-1', 'tz:Etc/GMT+1')
+    .text('UTC+0', 'tz:Etc/GMT')
+    .text('UTC+1', 'tz:Etc/GMT-1')
     .row()
-    .text('✏️ Type manually (e.g. "Europe/Kyiv")', 'tz_region:manual');
+    .text('UTC+2', 'tz:Etc/GMT-2')
+    .text('UTC+3', 'tz:Etc/GMT-3')
+    .text('UTC+4', 'tz:Etc/GMT-4')
+    .row()
+    .text('UTC+5', 'tz:Etc/GMT-5')
+    .text('UTC+5:30', 'tz:Asia/Kolkata')
+    .text('UTC+6', 'tz:Etc/GMT-6')
+    .row()
+    .text('UTC+7', 'tz:Etc/GMT-7')
+    .text('UTC+8', 'tz:Etc/GMT-8')
+    .text('UTC+9', 'tz:Etc/GMT-9')
+    .row()
+    .text('UTC+10', 'tz:Etc/GMT-10')
+    .text('UTC+12', 'tz:Etc/GMT-12')
+    .row()
+    .text('✏️ Type city (e.g. "Europe/Lisbon")', 'tz_region:manual');
 }
-
-export function timezoneCitiesKeyboard(region: string): InlineKeyboard {
-  const kb = new InlineKeyboard();
-  const cities = timezoneCities[region] || [];
-
-  for (let i = 0; i < cities.length; i += 2) {
-    const row = cities.slice(i, i + 2);
-    for (const city of row) {
-      kb.text(city.label, `tz:${city.tz}`);
-    }
-    kb.row();
-  }
-
-  kb.text('✏️ Type manually', 'tz_region:manual');
-  kb.text('⬅️ Back', 'tz_region:back');
-  return kb;
-}
-
-const timezoneCities: Record<string, { label: string; tz: string }[]> = {
-  europe: [
-    { label: '🇬🇧 London', tz: 'Europe/London' },
-    { label: '🇩🇪 Berlin', tz: 'Europe/Berlin' },
-    { label: '🇫🇷 Paris', tz: 'Europe/Paris' },
-    { label: '🇪🇸 Madrid', tz: 'Europe/Madrid' },
-    { label: '🇮🇹 Rome', tz: 'Europe/Rome' },
-    { label: '🇳🇱 Amsterdam', tz: 'Europe/Amsterdam' },
-    { label: '🇺🇦 Kyiv', tz: 'Europe/Kyiv' },
-    { label: '🇵🇱 Warsaw', tz: 'Europe/Warsaw' },
-    { label: '🇷🇴 Bucharest', tz: 'Europe/Bucharest' },
-    { label: '🇬🇷 Athens', tz: 'Europe/Athens' },
-    { label: '🇫🇮 Helsinki', tz: 'Europe/Helsinki' },
-    { label: '🇹🇷 Istanbul', tz: 'Europe/Istanbul' },
-    { label: '🇷🇺 Moscow', tz: 'Europe/Moscow' },
-    { label: '🇦🇿 Baku', tz: 'Asia/Baku' },
-  ],
-  asia: [
-    { label: '🇦🇪 Dubai', tz: 'Asia/Dubai' },
-    { label: '🇮🇳 Kolkata', tz: 'Asia/Kolkata' },
-    { label: '🇹🇭 Bangkok', tz: 'Asia/Bangkok' },
-    { label: '🇸🇬 Singapore', tz: 'Asia/Singapore' },
-    { label: '🇨🇳 Shanghai', tz: 'Asia/Shanghai' },
-    { label: '🇯🇵 Tokyo', tz: 'Asia/Tokyo' },
-    { label: '🇰🇷 Seoul', tz: 'Asia/Seoul' },
-    { label: '🇮🇱 Jerusalem', tz: 'Asia/Jerusalem' },
-    { label: '🇬🇪 Tbilisi', tz: 'Asia/Tbilisi' },
-    { label: '🇰🇿 Almaty', tz: 'Asia/Almaty' },
-  ],
-  americas: [
-    { label: '🇺🇸 New York', tz: 'America/New_York' },
-    { label: '🇺🇸 Chicago', tz: 'America/Chicago' },
-    { label: '🇺🇸 Denver', tz: 'America/Denver' },
-    { label: '🇺🇸 Los Angeles', tz: 'America/Los_Angeles' },
-    { label: '🇨🇦 Toronto', tz: 'America/Toronto' },
-    { label: '🇨🇦 Vancouver', tz: 'America/Vancouver' },
-    { label: '🇧🇷 São Paulo', tz: 'America/Sao_Paulo' },
-    { label: '🇲🇽 Mexico City', tz: 'America/Mexico_City' },
-    { label: '🇦🇷 Buenos Aires', tz: 'America/Argentina/Buenos_Aires' },
-    { label: '🇨🇴 Bogota', tz: 'America/Bogota' },
-  ],
-  africa: [
-    { label: '🇿🇦 Johannesburg', tz: 'Africa/Johannesburg' },
-    { label: '🇪🇬 Cairo', tz: 'Africa/Cairo' },
-    { label: '🇳🇬 Lagos', tz: 'Africa/Lagos' },
-    { label: '🇰🇪 Nairobi', tz: 'Africa/Nairobi' },
-    { label: '🇲🇦 Casablanca', tz: 'Africa/Casablanca' },
-    { label: '🇪🇹 Addis Ababa', tz: 'Africa/Addis_Ababa' },
-  ],
-  pacific: [
-    { label: '🇦🇺 Sydney', tz: 'Australia/Sydney' },
-    { label: '🇦🇺 Melbourne', tz: 'Australia/Melbourne' },
-    { label: '🇦🇺 Perth', tz: 'Australia/Perth' },
-    { label: '🇳🇿 Auckland', tz: 'Pacific/Auckland' },
-    { label: '🇫🇯 Fiji', tz: 'Pacific/Fiji' },
-  ],
-};
 
 /** Validate if a string is a valid IANA timezone */
 export function isValidTimezone(tz: string): boolean {
