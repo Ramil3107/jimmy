@@ -5,8 +5,29 @@ import {
   timezoneRegionKeyboard,
   timezoneCitiesKeyboard,
   digestTimeKeyboard,
+  isValidTimezone,
 } from '../../bot/keyboards.js';
 import { logger } from '../../core/logger.js';
+
+// Map Telegram language_code to our suggested timezone
+const langToTimezone: Record<string, { tz: string; city: string }> = {
+  uk: { tz: 'Europe/Kyiv', city: 'Kyiv' },
+  az: { tz: 'Asia/Baku', city: 'Baku' },
+  tr: { tz: 'Europe/Istanbul', city: 'Istanbul' },
+  de: { tz: 'Europe/Berlin', city: 'Berlin' },
+  fr: { tz: 'Europe/Paris', city: 'Paris' },
+  es: { tz: 'Europe/Madrid', city: 'Madrid' },
+  pt: { tz: 'America/Sao_Paulo', city: 'São Paulo' },
+  it: { tz: 'Europe/Rome', city: 'Rome' },
+  pl: { tz: 'Europe/Warsaw', city: 'Warsaw' },
+  ja: { tz: 'Asia/Tokyo', city: 'Tokyo' },
+  zh: { tz: 'Asia/Shanghai', city: 'Shanghai' },
+  ko: { tz: 'Asia/Seoul', city: 'Seoul' },
+  ar: { tz: 'Asia/Dubai', city: 'Dubai' },
+  hi: { tz: 'Asia/Kolkata', city: 'Kolkata' },
+  en: { tz: 'America/New_York', city: 'New York' },
+  ru: { tz: 'Europe/Moscow', city: 'Moscow' },
+};
 
 /**
  * Handle messages from users who haven't completed onboarding.
@@ -69,11 +90,34 @@ async function stepNameInput(ctx: BotContext): Promise<void> {
   await ctx.reply('👤 How should I call you?');
 }
 
-/** Step 3 → Ask for timezone */
+/** Step 3 → Ask for timezone, try to suggest based on language */
 async function stepTimezonePrompt(ctx: BotContext): Promise<void> {
-  await ctx.reply('🕐 What\'s your timezone? Pick your region:', {
-    reply_markup: timezoneRegionKeyboard(),
-  });
+  // Try to suggest timezone from Telegram language_code or selected language
+  const langCode = ctx.from?.language_code || ctx.user.language;
+  const suggestion = langToTimezone[langCode];
+
+  if (suggestion) {
+    await ctx.reply(
+      `🕐 Based on your language, your timezone might be **${suggestion.city}** (${suggestion.tz}).\n\nIs that correct?`,
+      {
+        parse_mode: 'Markdown',
+        reply_markup: timezoneSuggestionKeyboard(suggestion.tz, suggestion.city),
+      },
+    );
+  } else {
+    await ctx.reply('🕐 What\'s your timezone? Pick your region:', {
+      reply_markup: timezoneRegionKeyboard(),
+    });
+  }
+}
+
+function timezoneSuggestionKeyboard(tz: string, city: string) {
+  const { InlineKeyboard } = require('grammy') as typeof import('grammy');
+  return new InlineKeyboard()
+    .text(`✅ Yes, ${city}`, `tz:${tz}`)
+    .text('❌ No, pick another', 'tz_region:pick')
+    .row()
+    .text('✏️ Type manually', 'tz_region:manual');
 }
 
 /** Step 4 → Ask for morning digest time */
@@ -97,11 +141,11 @@ async function stepTour(ctx: BotContext): Promise<void> {
   await ctx.reply(
     `🎉 You're all set, ${name}!\n\n` +
     'Here\'s what I can do:\n\n' +
-    '💬 **Chat** — Talk to me about anything\n' +
-    '📋 **Tasks** — "Remind me to call mom tomorrow at 3pm"\n' +
-    '📝 **Notes** — "Remember: pancake recipe — 2 eggs, flour, milk"\n' +
-    '📅 **Calendar** — "What\'s on my schedule today?" (coming soon)\n\n' +
-    'You can also send voice messages — I\'ll understand those too! 🎤\n\n' +
+    '💬 *Chat* — Talk to me about anything\n' +
+    '📋 *Tasks* — "Remind me to call mom tomorrow at 3pm"\n' +
+    '📝 *Notes* — "Remember: pancake recipe — 2 eggs, flour, milk"\n' +
+    '📅 *Calendar* — "What\'s on my schedule today?" (coming soon)\n\n' +
+    '🎤 You can also send voice messages!\n\n' +
     'Type anything to start chatting!',
     { parse_mode: 'Markdown' }
   );
@@ -116,7 +160,6 @@ async function stepTour(ctx: BotContext): Promise<void> {
 export async function handleLanguageCallback(ctx: BotContext, langCode: string): Promise<void> {
   if (langCode === 'other') {
     await ctx.reply('Please type your preferred language (e.g. "Italian", "日本語", "العربية"):');
-    // Stay on step 1, next text message will be treated as language name
     return;
   }
 
@@ -125,8 +168,10 @@ export async function handleLanguageCallback(ctx: BotContext, langCode: string):
   ctx.user.onboarding_step = 2;
 
   const langNames: Record<string, string> = {
-    en: 'English', ru: 'Русский', es: 'Español', de: 'Deutsch',
+    en: 'English', uk: 'Українська', es: 'Español', de: 'Deutsch',
     fr: 'Français', pt: 'Português', tr: 'Türkçe', az: 'Azərbaycan',
+    it: 'Italiano', pl: 'Polski', ja: '日本語', zh: '中文',
+    ar: 'العربية', hi: 'हिन्दी',
   };
 
   await ctx.answerCallbackQuery(`✅ ${langNames[langCode] || langCode}`);
@@ -137,7 +182,7 @@ export async function handleLanguageCallback(ctx: BotContext, langCode: string):
 export async function handleLanguageText(ctx: BotContext, text: string): Promise<void> {
   const language = text.trim();
   if (language.length < 2 || language.length > 50) {
-    await ctx.reply('Please type a valid language name (e.g. "Italian", "日本語"):');
+    await ctx.reply('I didn\'t understand that. Please type a language name (e.g. "Italian", "日本語"):');
     return;
   }
 
@@ -153,7 +198,7 @@ export async function handleLanguageText(ctx: BotContext, text: string): Promise
 export async function handleNameInput(ctx: BotContext, text: string): Promise<void> {
   const name = text.trim();
   if (name.length < 1 || name.length > 100) {
-    await ctx.reply('Please enter a name (1-100 characters):');
+    await ctx.reply('I didn\'t get that. Please enter a name (1-100 characters):');
     return;
   }
 
@@ -167,11 +212,22 @@ export async function handleNameInput(ctx: BotContext, text: string): Promise<vo
 
 /** Handle timezone region selection callback */
 export async function handleTimezoneRegionCallback(ctx: BotContext, region: string): Promise<void> {
-  if (region === 'back') {
+  if (region === 'back' || region === 'pick') {
     await ctx.answerCallbackQuery();
     await ctx.editMessageText('🕐 What\'s your timezone? Pick your region:', {
       reply_markup: timezoneRegionKeyboard(),
     });
+    return;
+  }
+
+  if (region === 'manual') {
+    await ctx.answerCallbackQuery();
+    await ctx.reply(
+      '✏️ Please type your timezone in IANA format.\n\n' +
+      'Examples: `Europe/Kyiv`, `America/New_York`, `Asia/Tokyo`\n\n' +
+      'You can find yours at: timeanddate.com',
+      { parse_mode: 'Markdown' },
+    );
     return;
   }
 
@@ -188,6 +244,30 @@ export async function handleTimezoneCallback(ctx: BotContext, timezone: string):
   ctx.user.onboarding_step = 4;
 
   await ctx.answerCallbackQuery(`✅ ${timezone}`);
+  await stepDigestMorning(ctx);
+}
+
+/** Handle manual timezone text input */
+export async function handleTimezoneText(ctx: BotContext, text: string): Promise<void> {
+  const tz = text.trim();
+
+  if (!isValidTimezone(tz)) {
+    await ctx.reply(
+      'I don\'t recognize that timezone. Please use IANA format like `Europe/Kyiv` or `America/New_York`.\n\n' +
+      'Or use the buttons to pick from the list:',
+      {
+        parse_mode: 'Markdown',
+        reply_markup: timezoneRegionKeyboard(),
+      },
+    );
+    return;
+  }
+
+  await updateUser(ctx.user.id, { timezone: tz, onboarding_step: 4 });
+  ctx.user.timezone = tz;
+  ctx.user.onboarding_step = 4;
+
+  await ctx.reply(`✅ Timezone set to ${tz}`);
   await stepDigestMorning(ctx);
 }
 
@@ -222,7 +302,6 @@ export async function handleDigestCallback(
 
 /**
  * Route text messages during onboarding to the correct handler.
- * Called from the onboarding guard when user sends text and is not yet onboarded.
  */
 export async function handleOnboardingText(ctx: BotContext): Promise<void> {
   const text = ctx.message?.text;
@@ -232,11 +311,14 @@ export async function handleOnboardingText(ctx: BotContext): Promise<void> {
 
   switch (step) {
     case 1:
-      // User is typing language name (chose "Other")
       await handleLanguageText(ctx, text);
       break;
     case 2:
       await handleNameInput(ctx, text);
+      break;
+    case 3:
+      // Manual timezone input
+      await handleTimezoneText(ctx, text);
       break;
     default:
       // For steps that use inline keyboards, re-show the prompt

@@ -173,6 +173,9 @@ Never leave completed work unchecked. This is critical for tracking progress acr
 - **Platform independence**: Core/features don't import from bot/
 - **Flat structure**: Most folders have 1-4 files max
 - **Security**: Env-only secrets, RLS on all tables, encrypted OAuth tokens
+- **Abuse protection**: Always enforce limits on bulk operations (max 10 items per request), validate all user input, reject prompt injection attempts in LLM prompts, enforce rate limiting. Every new feature must consider how it can be abused.
+- **Voice limits**: Max 2 min voice messages. Reject longer ones politely.
+- **LLM strictness**: Never hallucinate, never make up data, always ask to clarify when unsure. Prefer "I don't understand" over guessing.
 
 ## Current Milestone: M1 — Core Assistant
 

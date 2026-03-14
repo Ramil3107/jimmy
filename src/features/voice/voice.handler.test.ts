@@ -77,7 +77,7 @@ describe('handleVoice', () => {
 
     expect(result).toBe('hello world');
     expect(ctx.replyWithChatAction).toHaveBeenCalledWith('typing');
-    expect(ctx.reply).toHaveBeenCalledWith('🎤 Heard: "hello world"');
+    expect(ctx.reply).toHaveBeenCalledWith('🎤 _"hello world"_', { parse_mode: 'Markdown' });
   });
 
   it('handles empty transcription', async () => {

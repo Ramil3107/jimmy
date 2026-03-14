@@ -2,7 +2,9 @@ import type { BotContext } from '../../bot/context.js';
 import { transcribe } from './transcriber.js';
 import { logger } from '../../core/logger.js';
 
-const MAX_DURATION_SECONDS = 300; // 5 minutes
+// 2 minutes max — enough for any personal assistant request.
+// Longer messages are likely accidental or abusive.
+const MAX_DURATION_SECONDS = 120;
 
 export async function handleVoice(ctx: BotContext): Promise<string | null> {
   const voice = ctx.message?.voice;
@@ -10,7 +12,10 @@ export async function handleVoice(ctx: BotContext): Promise<string | null> {
 
   // Check duration
   if (voice.duration > MAX_DURATION_SECONDS) {
-    await ctx.reply('⚠️ Voice message is too long (max 5 minutes). Please send a shorter one.');
+    await ctx.reply(
+      `⚠️ Voice message is too long (${Math.round(voice.duration / 60)} min). ` +
+      'Please keep it under 2 minutes — short and clear messages work best!'
+    );
     return null;
   }
 
@@ -39,12 +44,12 @@ export async function handleVoice(ctx: BotContext): Promise<string | null> {
     }
 
     // Show what we heard
-    await ctx.reply(`🎤 Heard: "${text}"`);
+    await ctx.reply(`🎤 _"${text}"_`, { parse_mode: 'Markdown' });
 
     return text;
   } catch (err) {
     logger.error(err, 'Voice processing failed');
-    await ctx.reply('😕 Something went wrong processing your voice message. Please try again or send text.');
+    await ctx.reply('Something went wrong processing your voice message. Please try again or send text.');
     return null;
   }
 }

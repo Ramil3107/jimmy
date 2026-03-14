@@ -1,6 +1,5 @@
 import type { Skill } from '../../core/skills/types.js';
 import type { BotContext } from '../../bot/context.js';
-import { getAllSkills } from '../../core/skills/registry.js';
 
 export const helpSkill: Skill = {
   name: 'help',
@@ -13,19 +12,16 @@ export const helpSkill: Skill = {
     'show me your features',
   ],
   handler: async (ctx: BotContext): Promise<void> => {
-    const skills = getAllSkills();
-
-    const lines = skills
-      .filter((s) => s.name !== 'help') // don't list help itself
-      .map((s) => {
-        const examples = s.examples.slice(0, 2).map((e) => `"${e}"`).join(', ');
-        return `• **${s.name}** — ${s.description}\n  Try: ${examples}`;
-      });
+    const name = ctx.user.display_name || 'friend';
 
     const text =
-      '🤖 **Here\'s what I can do:**\n\n' +
-      lines.join('\n\n') +
-      '\n\n💡 Just talk to me naturally — I\'ll figure out what you need!';
+      `Hey ${name}! Here\'s what I can do:\n\n` +
+      '💬 *Chat* — Talk to me about anything\n' +
+      '📋 *Tasks* — "Remind me to call mom tomorrow at 3pm"\n' +
+      '📝 *Notes* — "Remember: pancake recipe — 2 eggs, flour, milk"\n' +
+      '📅 *Calendar* — "What\'s on my schedule today?" (coming soon)\n\n' +
+      '🎤 You can also send voice messages!\n\n' +
+      '💡 Just talk to me naturally — I\'ll figure out what you need!';
 
     await ctx.reply(text, { parse_mode: 'Markdown' });
   },

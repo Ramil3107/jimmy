@@ -1,11 +1,12 @@
 import type { IntentResult, RoutingContext } from './types.js';
 
 const patterns: { regex: RegExp; intent: string; response: string }[] = [
-  { regex: /^\/help|help|what can you do/i, intent: 'help', response: 'Here\'s what I can do...' },
-  { regex: /^\/start/i, intent: 'help', response: 'Welcome!' },
-  { regex: /remind|task|todo|to-do/i, intent: 'create_task', response: '[Mock] I\'d create a task for you.' },
-  { regex: /note|remember|save/i, intent: 'create_note', response: '[Mock] I\'d save a note for you.' },
-  { regex: /calendar|schedule|meeting|event/i, intent: 'list_events', response: '[Mock] I\'d check your calendar.' },
+  { regex: /^\/help$/i, intent: 'help', response: 'Here\'s what I can do...' },
+  { regex: /^help$/i, intent: 'help', response: 'Here\'s what I can do...' },
+  { regex: /^what can you do\??$/i, intent: 'help', response: 'Here\'s what I can do...' },
+  { regex: /\b(remind|task|todo|to-do)\b/i, intent: 'create_task', response: '[Mock] I\'d create a task for you.' },
+  { regex: /\b(note|remember this|save this)\b/i, intent: 'create_note', response: '[Mock] I\'d save a note for you.' },
+  { regex: /\b(calendar|schedule|meetings?|events?)\b/i, intent: 'list_events', response: '[Mock] I\'d check your calendar.' },
 ];
 
 export function mockRouteMessage(
