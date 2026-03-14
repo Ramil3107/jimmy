@@ -107,7 +107,6 @@ async function handleListTasks(ctx: BotContext, params: Record<string, unknown>)
 async function showTodayTasks(ctx: BotContext): Promise<void> {
   const allTasks = await getTasksByUser(ctx.user.id, { includeDone: true, limit: 50 });
   const tz = ctx.user.timezone;
-
   const todayStr = getDateInTimezone(new Date(), tz);
 
   const todayOpen: Task[] = [];
@@ -127,48 +126,45 @@ async function showTodayTasks(ctx: BotContext): Promise<void> {
   }
 
   if (todayOpen.length === 0 && noDated.length === 0 && todayDone.length === 0) {
-    await ctx.reply('No tasks for today. Try saying "remind me to..." to create one!');
+    await ctx.reply('📋 No tasks for today\\. Try saying "remind me to\\.\\.\\." to create one\\!', { parse_mode: 'MarkdownV2' });
     return;
   }
 
-  const lines: string[] = [];
+  const lines: string[] = ['📋 *Today*\n'];
 
-  if (todayOpen.length > 0 || noDated.length > 0) {
-    lines.push('📋 *Today:*');
-    for (const t of todayOpen) {
-      lines.push(`⬜ ${escMd(t.title)}${t.due_date ? ` — ${formatTime(t.due_date, tz)}` : ''}`);
-    }
-    for (const t of noDated) {
-      lines.push(`⬜ ${escMd(t.title)} _(no date)_`);
-    }
+  for (const t of todayOpen) {
+    const time = t.due_date ? `  ·  ${formatTime(t.due_date, tz)}` : '';
+    lines.push(`○  ${escV2(t.title)}${time}`);
+  }
+  for (const t of noDated) {
+    lines.push(`○  ${escV2(t.title)}`);
   }
 
   if (todayDone.length > 0) {
-    if (lines.length > 0) lines.push('');
-    lines.push('✅ *Done today:*');
+    lines.push('\n_Completed:_\n');
     for (const t of todayDone) {
-      lines.push(`✅ ~${escMd(t.title)}~`);
+      lines.push(`✓  ~${escV2(t.title)}~`);
     }
   }
 
-  await ctx.reply(lines.join('\n'), { parse_mode: 'Markdown' });
+  await ctx.reply(lines.join('\n'), { parse_mode: 'MarkdownV2' });
 }
 
 async function showAllTasks(ctx: BotContext): Promise<void> {
   const tasks = await getTasksByUser(ctx.user.id, { includeDone: false, limit: 50 });
 
   if (tasks.length === 0) {
-    await ctx.reply('No open tasks!');
+    await ctx.reply('📋 No open tasks\\!', { parse_mode: 'MarkdownV2' });
     return;
   }
 
-  const lines = tasks.map((t) => {
-    let line = `⬜ *${escMd(t.title)}*`;
-    if (t.due_date) line += ` — ${formatDate(t.due_date, ctx.user.timezone)}`;
-    return line;
-  });
+  const lines: string[] = [`📋 *All open tasks* \\(${tasks.length}\\)\n`];
+  for (const t of tasks) {
+    const date = t.due_date ? `  ·  ${formatDate(t.due_date, ctx.user.timezone)}` : '';
+    lines.push(`○  ${escV2(t.title)}${escV2(date)}`);
+  }
 
-  await ctx.reply(`📋 *All open tasks (${tasks.length}):*\n\n${lines.join('\n')}`, { parse_mode: 'Markdown' });
+  await ctx.reply(lines.join('\n'), { parse_mode: 'MarkdownV2' });
 }
 
 async function showDoneTasks(ctx: BotContext): Promise<void> {
@@ -176,12 +172,16 @@ async function showDoneTasks(ctx: BotContext): Promise<void> {
   const done = tasks.filter((t) => t.is_done);
 
   if (done.length === 0) {
-    await ctx.reply('No completed tasks yet.');
+    await ctx.reply('No completed tasks yet\\.');
     return;
   }
 
-  const lines = done.map((t) => `✅ ~${escMd(t.title)}~`);
-  await ctx.reply(`✅ *Completed tasks (${done.length}):*\n\n${lines.join('\n')}`, { parse_mode: 'Markdown' });
+  const lines: string[] = [`✓ *Completed* \\(${done.length}\\)\n`];
+  for (const t of done) {
+    lines.push(`✓  ~${escV2(t.title)}~`);
+  }
+
+  await ctx.reply(lines.join('\n'), { parse_mode: 'MarkdownV2' });
 }
 
 async function showWeekView(ctx: BotContext): Promise<void> {
@@ -189,18 +189,17 @@ async function showWeekView(ctx: BotContext): Promise<void> {
   const tz = ctx.user.timezone;
   const now = new Date();
 
-  // Get start of today and 7 days
   const days: { label: string; dateStr: string }[] = [];
   for (let i = 0; i < 7; i++) {
     const d = new Date(now.getTime() + i * 86400000);
     const dateStr = getDateInTimezone(d, tz);
     const dayName = d.toLocaleDateString('en-US', { timeZone: tz, weekday: 'long' });
     const dayDate = d.toLocaleDateString('en-US', { timeZone: tz, month: 'short', day: 'numeric' });
-    const label = i === 0 ? `Today (${dayDate})` : `${dayName} (${dayDate})`;
+    const label = i === 0 ? `Today, ${dayDate}` : `${dayName}, ${dayDate}`;
     days.push({ label, dateStr });
   }
 
-  const lines: string[] = ['📅 *This week:*'];
+  const lines: string[] = ['📅 *This week*\n'];
   let hasAny = false;
 
   for (const day of days) {
@@ -212,33 +211,30 @@ async function showWeekView(ctx: BotContext): Promise<void> {
     if (dayTasks.length === 0) continue;
     hasAny = true;
 
-    lines.push('');
-    lines.push(`*${day.label}:*`);
+    lines.push(`\n*${escV2(day.label)}*`);
     for (const t of dayTasks) {
-      const icon = t.is_done ? '✅' : '⬜';
-      const text = t.is_done ? `~${escMd(t.title)}~` : escMd(t.title);
-      const time = t.due_date ? ` ${formatTime(t.due_date, tz)}` : '';
-      lines.push(`${icon} ${text}${time}`);
+      const prefix = t.is_done ? '✓' : '○';
+      const title = t.is_done ? `~${escV2(t.title)}~` : escV2(t.title);
+      const time = t.due_date ? `  ·  ${formatTime(t.due_date, tz)}` : '';
+      lines.push(`${prefix}  ${title}${escV2(time)}`);
     }
   }
 
-  // Tasks without dates
   const noDated = allTasks.filter((t) => !t.due_date && !t.is_done);
   if (noDated.length > 0) {
     hasAny = true;
-    lines.push('');
-    lines.push('*No date:*');
+    lines.push('\n*No date*');
     for (const t of noDated) {
-      lines.push(`⬜ ${escMd(t.title)}`);
+      lines.push(`○  ${escV2(t.title)}`);
     }
   }
 
   if (!hasAny) {
-    await ctx.reply('No tasks this week. Enjoy your free time!');
+    await ctx.reply('📅 No tasks this week\\. Enjoy your free time\\!', { parse_mode: 'MarkdownV2' });
     return;
   }
 
-  await ctx.reply(lines.join('\n'), { parse_mode: 'Markdown' });
+  await ctx.reply(lines.join('\n'), { parse_mode: 'MarkdownV2' });
 }
 
 // --- Complete ---
@@ -425,4 +421,9 @@ function getDateInTimezone(date: Date, timezone: string): string {
 /** Escape Markdown special chars in user content */
 function escMd(text: string): string {
   return text.replace(/[_*[\]()~`>#+\-=|{}.!]/g, '\\$&');
+}
+
+/** Escape for MarkdownV2 (stricter) */
+function escV2(text: string): string {
+  return text.replace(/[_*[\]()~`>#+\-=|{}.!\\]/g, '\\$&');
 }
