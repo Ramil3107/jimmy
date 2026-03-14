@@ -62,26 +62,23 @@ beforeEach(() => {
 });
 
 describe('handleOnboarding', () => {
-  it('step 0: sends welcome and advances to language prompt', async () => {
+  it('step 0: sends welcome, sets English, and advances to name prompt', async () => {
     const ctx = makeCtx(0);
 
     await handleOnboarding(ctx);
 
-    // Welcome message + language prompt = 2 replies
+    // Welcome message + name prompt = 2 replies
     expect(ctx.reply).toHaveBeenCalledTimes(2);
-    expect(mockUpdateUser).toHaveBeenCalledWith('uuid-123', { onboarding_step: 1 });
+    expect(mockUpdateUser).toHaveBeenCalledWith('uuid-123', { language: 'en', onboarding_step: 2 });
   });
 
-  it('step 1: shows language keyboard', async () => {
+  it('step 1: skips language, sets English, advances to name', async () => {
     const ctx = makeCtx(1);
 
     await handleOnboarding(ctx);
 
-    expect(ctx.reply).toHaveBeenCalledTimes(1);
-    expect(ctx.reply).toHaveBeenCalledWith(
-      expect.stringContaining('language'),
-      expect.objectContaining({ reply_markup: expect.anything() }),
-    );
+    expect(mockUpdateUser).toHaveBeenCalledWith('uuid-123', { language: 'en', onboarding_step: 2 });
+    expect(ctx.reply).toHaveBeenCalledWith(expect.stringContaining('call you'));
   });
 
   it('step 2: asks for name', async () => {

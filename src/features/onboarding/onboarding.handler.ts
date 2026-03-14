@@ -21,7 +21,11 @@ export async function handleOnboarding(ctx: BotContext): Promise<void> {
       await stepWelcome(ctx);
       break;
     case 1:
-      await stepLanguagePrompt(ctx);
+      // Language step skipped — default to English, advance to name
+      await updateUser(ctx.user.id, { language: 'en', onboarding_step: 2 });
+      ctx.user.language = 'en';
+      ctx.user.onboarding_step = 2;
+      await stepNameInput(ctx);
       break;
     case 2:
       await stepNameInput(ctx);
@@ -44,7 +48,7 @@ export async function handleOnboarding(ctx: BotContext): Promise<void> {
   }
 }
 
-/** Step 0 → Welcome, then auto-advance to step 1 (language) */
+/** Step 0 → Welcome, set language to English, skip to step 2 (name) */
 async function stepWelcome(ctx: BotContext): Promise<void> {
   await ctx.reply(
     '👋 Hi! I\'m Jimmy, your personal assistant.\n\n' +
@@ -52,10 +56,11 @@ async function stepWelcome(ctx: BotContext): Promise<void> {
     'Let\'s get you set up! It\'ll only take a minute.'
   );
 
-  await updateUser(ctx.user.id, { onboarding_step: 1 });
-  ctx.user.onboarding_step = 1;
+  await updateUser(ctx.user.id, { language: 'en', onboarding_step: 2 });
+  ctx.user.language = 'en';
+  ctx.user.onboarding_step = 2;
 
-  await stepLanguagePrompt(ctx);
+  await stepNameInput(ctx);
 }
 
 /** Step 1 → Ask for language */
