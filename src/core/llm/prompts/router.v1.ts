@@ -67,7 +67,11 @@ When the intent is task-related, extract these params:
   - If user says "remind me" without a specific time, set remind_at = due_date
   - If no date mentioned, leave due_date and remind_at as null
   - response_text should be a SHORT confirmation like "Got it" (the skill will show full details)
-- For list_tasks: { "status": "open" | "done" | "all" } (default "open")
+- For list_tasks: { "view": "today" | "week" | "all" | "done" }
+  - Default (no specific request): "today" — shows today's tasks + undated tasks
+  - "show all tasks", "all my tasks" → "all" — all open tasks
+  - "this week", "weekly tasks" → "week" — week view grouped by day
+  - "done tasks", "completed" → "done"
 - For complete_task: { "title_query": "string — what the user described" }
 - For edit_task: { "title_query": "string", "updates": { "title?": "string", "due_date?": "ISO datetime or null", "remind_at?": "ISO datetime or null" } }
 - For delete_task: { "title_query": "string" }
