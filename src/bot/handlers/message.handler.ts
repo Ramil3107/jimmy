@@ -17,11 +17,12 @@ export async function handleMessage(ctx: BotContext, text: string): Promise<void
     logger.error(err, 'Failed to load message history');
   }
 
+  const now = new Date();
   const context: RoutingContext = {
     user_name: user.display_name || 'friend',
     language: user.language,
     timezone: user.timezone,
-    current_time: new Date().toISOString(),
+    current_time: formatCurrentTime(now, user.timezone),
     available_skills: getSkillDescriptions(),
     recent_messages: recentMessages,
   };
@@ -76,5 +77,25 @@ export async function handleMessage(ctx: BotContext, text: string): Promise<void
   } catch (err) {
     logger.error(err, 'Message handling failed');
     await ctx.reply("Something went wrong. Please try again.");
+  }
+}
+
+/** Format current time with both ISO and human-readable form for the LLM */
+function formatCurrentTime(now: Date, timezone: string): string {
+  const iso = now.toISOString();
+  try {
+    const readable = now.toLocaleString('en-US', {
+      timeZone: timezone,
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
+    return `${iso} (${readable} in ${timezone})`;
+  } catch {
+    return iso;
   }
 }

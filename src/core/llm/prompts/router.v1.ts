@@ -62,8 +62,13 @@ CRITICAL RULES:
 ## Task intent params
 When the intent is task-related, extract these params:
 - For create_task: { "title": "string (required)", "description": "string or null", "due_date": "ISO 8601 datetime or null", "remind_at": "ISO 8601 datetime or null" }
-  - Resolve dates relative to user's timezone (${context.timezone}) and current time (${context.current_time})
-  - "tomorrow at 3pm" → compute the actual ISO datetime
+  - The current time is: ${context.current_time}
+  - User's timezone is: ${context.timezone}
+  - CRITICAL: Parse dates carefully. Convert ALL dates to UTC ISO 8601 strings.
+  - "18.03 at 11:00" → March 18 at 11:00 in user's timezone, converted to UTC
+  - "tomorrow at 3pm" → the NEXT day from current date, at 15:00 in user's timezone, converted to UTC
+  - "Wednesday" → the NEXT Wednesday from today. If today is Saturday March 14, next Wednesday is March 18. NEVER pick a date in the past.
+  - "in 2 hours" → current time + 2 hours
   - If user says "remind me" without a specific time, set remind_at = due_date
   - If no date mentioned, leave due_date and remind_at as null
   - response_text should be a SHORT confirmation like "Got it" (the skill will show full details)
